@@ -1,0 +1,17 @@
+﻿@model SertaCup_site.Models.Game
+
+<h1>Jogo @Model.Id</h1>
+
+<h2>@ViewBag.Equipa1Name vs @ViewBag.Equipa2Name</h2>
+
+<p>Este jogo ainda não começou. Clica em "Começar jogo" para iniciar a partida.</p>
+
+<div>
+    <form method="get" action="/Home/StartGame">
+        <input type="hidden" name="id" value="@Model.Id" />
+        
+        <button type="submit">Começar Jogo</button>
+    </form>
+
+    
+</div>

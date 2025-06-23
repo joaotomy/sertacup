@@ -1,0 +1,189 @@
+﻿@model SertaCup_site.Models.Game
+
+@{
+    var equipa1 = ViewBag.Equipa1Name;
+    var equipa2 = ViewBag.Equipa2Name;
+    var horaInicio = ViewBag.HoraInicio;
+}
+
+@{
+    bool primeiraParte = !Model.primeira_parte_terminada;
+    bool segundaParte = Model.hora_inicio_2parte != null && !Model.terminado;
+    bool jogoEmAndamento = primeiraParte || segundaParte;
+}
+@if (!Model.terminado)
+{
+    <h1>Jogo @Model.Id</h1>
+    
+
+    <h2>@equipa1 @Model.golos_equipa1 : @Model.golos_equipa2 @equipa2</h2>
+
+    @if (jogoEmAndamento)
+    {
+        <p id="timer">00:00</p>
+
+       
+        //<button type="button" onclick="abrirPopup()">Abrir popup</button>
+
+        <div>
+            <button type="button" onclick="abrirPopup(1)">Golo @ViewBag.Equipa1Name</button>
+
+            <button type="button" onclick= "abrirPopup(2)">Golo @ViewBag.Equipa2Name</button>
+            
+        </div>
+
+        //<button id="pauseBtn" onclick="togglePause()">Pausar</button>
+    }
+    else
+    {
+        <h2 style="font-family: 'Blockletter', sans-serif; font-size: 48px; text-align: center;">INTERVALO</h2>
+    }
+
+    <div style="margin-top:20px;">
+        @if (!Model.primeira_parte_terminada)
+        {
+            <form method="post" asp-action="TerminarPrimeiraParte" asp-route-id="@Model.Id">
+                <button type="submit">Terminar 1ª Parte</button>
+            </form>
+        }
+        else if (Model.hora_inicio_2parte == null)
+        {
+            <form method="post" asp-action="ComecarSegundaParte" asp-route-id="@Model.Id">
+                <button type="submit">Começar 2ª Parte</button>
+            </form>
+        }
+        else if (!Model.terminado)
+        {
+            <form method="post" asp-action="TerminarJogo" asp-route-id="@Model.Id">
+                <button type="submit">Terminar Jogo</button>
+            </form>
+        }
+
+        
+    </div>
+
+    <script>
+        const horaInicio = new Date("@ViewBag.HoraInicio");
+        const timerElement = document.getElementById('timer');
+        const initialPauseOffset = @ViewBag.TempoPausado * 1000; // convert to ms
+
+        let paused = false;
+        let pauseOffset = initialPauseOffset;
+        let pauseStart = null;
+
+        function updateTimer() {
+            if (paused) return;
+
+            const now = new Date();
+            const diffMs = now - horaInicio - pauseOffset;
+
+            const totalSeconds = Math.floor(diffMs / 1000);
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+
+            timerElement.innerText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function togglePause() {
+            if (!paused) {
+                paused = true;
+                pauseStart = new Date();
+                document.getElementById('pauseBtn').innerText = "Retomar";
+            } else {
+                paused = false;
+                const now = new Date();
+                pauseOffset += now - pauseStart;
+                document.getElementById('pauseBtn').innerText = "Pausar";
+
+                // Send updated pauseOffset to server
+                const tempoPausado = Math.floor(pauseOffset / 1000);
+                fetch(`/Home/AtualizarTempoPausado?id=${@Model.Id}&tempoPausado=${tempoPausado}`, {
+                    method: 'POST'
+                });
+            }
+        }
+
+
+        setInterval(updateTimer, 1000);
+        updateTimer();
+    </script>
+
+}
+
+else
+{
+    <h2>O jogo terminou. Por favor, volte à página inicial.</h2>
+}
+
+<!-- Overlay e Modal -->
+<div id="modalOverlay1" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5); z-index:999;">
+    <div style="background:white; padding:20px; margin:10% auto; width:300px; border-radius:8px; position:relative;">
+        <h3>Escolhe o jogador</h3>
+        <select id="dropdownJogadores1">
+            <option value=0>-- Nenhum jogador --</option>
+            @foreach (var jogador in ViewBag.JogadoresEquipa1 as List<SertaCup_site.Models.Player>)  
+            {
+                <option value="@jogador.Id">@jogador.Nome</option>
+            }
+        </select>
+        <br /><br />
+        <button onclick="confirmarSelecao(@Model.Id, 1)">Confirmar</button>
+        <button onclick="fecharPopup()">Cancelar</button>
+    </div>
+</div>
+
+<div id="modalOverlay2" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5); z-index:999;">
+    <div style="background:white; padding:20px; margin:10% auto; width:300px; border-radius:8px; position:relative;">
+        <h3>Escolhe o jogador</h3>
+        <select id="dropdownJogadores2">
+            <option value=0>-- Nenhum jogador --</option>
+            @foreach (var jogador in ViewBag.JogadoresEquipa2 as List<SertaCup_site.Models.Player>)  
+            {
+                <option value="@jogador.Id">@jogador.Nome</option>
+            }
+        </select>
+        <br /><br />
+        <button onclick="confirmarSelecao(@Model.Id, 2)">Confirmar</button>
+        <button onclick="fecharPopup()">Cancelar</button>
+    </div>
+</div>
+
+<script>
+    function abrirPopup(tipo) {
+        
+        if (tipo === 1) {
+            document.getElementById('modalOverlay1').style.display = 'block';
+        } else if (tipo === 2) {
+            document.getElementById('modalOverlay2').style.display = 'block';
+        }
+    
+    }
+
+    function fecharPopup() {
+        document.getElementById('modalOverlay1').style.display = 'none';
+        document.getElementById('modalOverlay2').style.display = 'none';
+    }
+
+    function confirmarSelecao(jogoId, tipo) {
+        const selectId = tipo === 1 ? 'dropdownJogadores1' : 'dropdownJogadores2';
+        const jogadorId = document.getElementById(selectId).value;
+
+        const url = tipo === 1
+        ? `/Home/AddGoalToTeam1?id=${jogoId}&id_jogador=${jogadorId}`
+        : `/Home/AddGoalToTeam2?id=${jogoId}&id_jogador=${jogadorId}`;
+
+        fetch(url, {
+            method: 'POST'
+        })
+        .then(response => {
+            if (response.ok) {
+                console.log("Golo adicionado!");
+                location.reload();
+            } else {
+                console.error("Erro ao adicionar golo.");
+            }
+        });
+
+        fecharPopup();
+    }
+</script>

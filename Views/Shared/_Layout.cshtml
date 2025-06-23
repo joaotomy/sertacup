@@ -1,0 +1,74 @@
+﻿<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Sertã Cup</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+    @RenderSection("Styles", required: false)
+</head>
+<body>
+    <header class="navbar">
+        <div class="nav-wrapper">
+            <div class="nav-section">
+                <a class="nav-item" asp-controller="Home" asp-action="Informações">INFORMAÇÕES</a>
+
+                <div class="dropdown">
+                    <span> <a asp-controller="Home" asp-action="Torneio" class="nav-item">TORNEIO</a> </span>
+                    <div class="dropdown-content">
+                        <a asp-controller="Home" asp-action="Torneio" asp-route-tab="calendario">Calendário</a>
+                        <a asp-controller="Home" asp-action="Torneio" asp-route-tab="grupos">Grupos</a>
+                        <a asp-controller="Home" asp-action="Torneio" asp-route-tab="fases-finais">Fases Finais</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="logo-container desktop-logo">
+                <a asp-controller="Home" asp-action="Index">
+                    <img src="~/images/logo.png" alt="Sertã Cup Logo" class="logo" />
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <a class="nav-item" asp-controller="Home" asp-action="Turismo">TURISMO</a>
+                <a class="nav-item" asp-controller="Home" asp-action="Page4">HISTÓRIA</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Top Section: Logo -->
+    <div class="mobile-top">
+        <a asp-controller="Home" asp-action="Index" class="mobile-logo-link">
+            <img src="~/images/logo.png" alt="Sertã Cup Logo" class="logo-mobile" />
+        </a>
+    </div>
+
+    <!-- Mobile Bottom Section: Hamburger and menu -->
+    <div class="mobile-bottom">
+        <button class="hamburger" onclick="toggleMenu()" id="hamburgerButton">☰</button>
+    </div>
+
+
+    <div class="mobile-menu" id="mobileMenu">
+        <a asp-controller="Home" asp-action="Informações">INFORMAÇÕES</a>
+        <div class="dropdown-mobile">
+            <span onclick="toggleSubMenu()">TORNEIO</span>
+            <div id="mobileSubmenu" class="mobile-submenu">
+                <a asp-controller="Home" asp-action="Torneio">Calendário</a>
+                <a asp-controller="Home" asp-action="Grupos">Grupos</a>
+                <a asp-controller="Home" asp-action="FasesFinais">Fases Finais</a>
+            </div>
+        </div>
+        <a asp-controller="Home" asp-action="Turismo">TURISMO</a>
+        <a asp-controller="Home" asp-action="Page4">HISTÓRIA</a>
+    </div>
+
+    <main>
+        @RenderBody()
+    </main>
+
+    <script src="~/js/site.js"></script>
+    @RenderSection("Scripts", required: false)
+
+</body>
+</html>

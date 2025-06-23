@@ -1,0 +1,91 @@
+﻿@{
+    ViewData["Title"] = "Início";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/index.css" />
+}
+
+<section class="hero">
+    <div class="hero-overlay"></div>
+    <div class="grid-container">
+        <div class="col-span-4 col-start-1 hero-cup-wrapper">
+            <img src="/images/cup test.png" alt="Taça Sertã Cup" class="hero-cup-img" />
+        </div>
+        <div class="col-span-6 col-start-6 md:col-span-5 md:col-start-4 sm:col-span-4 sm:col-start-1 hero-text">
+            <div class="hero-title">IV SERTÃ CUP</div>
+            <div class="hero-subtitle">28/29 JUNHO</div>
+            <div class="cta-wrapper">
+                <a class="cta" asp-controller="Home" asp-action="Informacoes">MAIS INFORMAÇÕES</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Live Games Section -->
+<section class="live-banner">
+    <div class="live-strip">ACOMPANHA OS RESULTADOS EM DIRETO!</div>
+        <div class="col-span-12 live-grid">
+            @for (int i = 0; i < 8; i++)
+            {
+                <div class="live-card">
+                    <div class="game-caption">
+                        <span class="left group">Grupo A</span>
+                        <span class="right">
+                            <span class="phase">1ª P</span>
+                            <span class="clock">32'</span>
+                        </span>
+                    </div>
+                    <div class="game-box">
+                        <div class="team-block">
+                            <img src="/images/teams/team-a.png" alt="Equipa A" class="team-logo" />
+                            <span class="team-name"><span>Equipa A</span></span>
+                            <div class="separator"></div>
+                            <span class="team-score">2</span>
+                        </div>
+                        <div class="team-block">
+                            <img src="/images/teams/team-b.png" alt="Equipa B" class="team-logo" />
+                            <span class="team-name"><span>Amigos Urgeses</span></span>
+                            <div class="separator"></div>
+                            <span class="team-score">1</span>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+</section>
+
+<!-- Blank Section 1 -->
+<section class="blank-section"></section>
+
+@{
+    var logoCount = 6;
+}
+
+<!-- Patron Banner -->
+<section class="patron-banner">
+    <div class="logos-wrapper">
+        <div class="logos-track" id="logosTrack">
+            @for (int i = 1; i <= logoCount; i++)
+            {
+                <div class="logo-slot">
+                    <img src="@($"/images/patron/{i}.png")" alt="Logo @i" />
+                </div>
+            }
+        </div>
+        <div class="logos-track clone">
+            @for (int i = 1; i <= logoCount; i++)
+            {
+                <div class="logo-slot">
+                    <img src="@($"/images/patron/{i}.png")" alt="Logo @i" />
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- Blank Section 2 -->
+<section class="blank-section"></section>
+
+<script src="~/js/index.js"></script>

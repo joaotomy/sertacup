@@ -1,0 +1,547 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
+@font-face {
+    font-family: 'Blockletter';
+    src: url('/fonts/Blockletter.woff2') format('woff2'), url('/fonts/Blockletter.woff') format('woff'), url('/fonts/Blockletter.otf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+:root {
+    /* Colors */
+    --main-black: #121212;
+    --main-white: #FBFBFB;
+    --overlay-black: #323232;
+    --overlay-white: #F1F1F1;
+    --live-red: #FF3A3A;
+    /* Fonts */
+    --font-display: 'Blockletter', sans-serif;
+    --font-regular: 'Montserrat', sans-serif;
+    --font-size-body: clamp(1rem, 0.8rem + 0.6vw, 1.125rem); /* readable on all */
+    --font-size-caption: clamp(0.625rem, 0.5rem + 0.3vw, 0.8rem); /* ~10–13px */
+
+    --font-size-h1: clamp(2.5rem, 4vw, 2.75rem);
+    --font-size-h2: clamp(2.125rem, 3.5vw, 2.5rem);
+    --font-size-h3: clamp(1.75rem, 3vw, 2.25rem);
+    --font-size-h4: clamp(1.25rem, 2.2vw, 1.75rem); /* min reduced from 1.5rem */
+    --font-size-h5: clamp(1.125rem, 2vw, 1.5rem); /* min reduced from 1.375rem */
+    --font-size-h6: clamp(1rem, 1.6vw, 1.375rem); /* min reduced from 1.25rem */
+    --font-size-h7: clamp(0.875rem, 1.2vw, 1.125rem); /* min reduced from 1.125rem */
+
+    --font-size-title: clamp(1.125rem, 1.4vw, 1.5rem); /* subtle */
+    --font-size-subtitle: clamp(1rem, 1.2vw, 1.375rem); /* tighter on small screens */
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: var(--font-size-body);
+}
+
+body {
+    font-family: var(--font-regular);
+    background-color: var(--main-white);
+    color: var(--main-black);
+}
+
+/* ========== GLOBAL GRID SYSTEM ========== */
+.grid-container {
+    display: grid;
+    gap: 0 24px;
+    padding-left: 32px;
+    padding-right: 32px;
+    grid-template-columns: repeat(12, 1fr);
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .md\:grid-cols-8 {
+        grid-template-columns: repeat(8, 1fr);
+    }
+
+    .grid-container {
+        padding-left: 24px;
+        padding-right: 24px;
+        grid-template-columns: repeat(8, 1fr);
+        gap: 0 16px;
+    }
+}
+
+@media (max-width: 768px) {
+    .sm\:grid-cols-4 {
+        grid-template-columns: repeat(4, 1fr);
+    }
+    .grid-container {
+        padding-left: 16px;
+        padding-right: 16px;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0 8px;
+    }
+}
+
+/* Grid Column Spans */
+.col-span-1 {
+    grid-column: span 1 / span 1;
+}
+
+.col-span-2 {
+    grid-column: span 2 / span 2;
+}
+
+.col-span-3 {
+    grid-column: span 3 / span 3;
+}
+
+.col-span-4 {
+    grid-column: span 4 / span 4;
+}
+
+.col-span-5 {
+    grid-column: span 5 / span 5;
+}
+
+.col-span-6 {
+    grid-column: span 6 / span 6;
+}
+
+.col-span-7 {
+    grid-column: span 7 / span 7;
+}
+
+.col-span-8 {
+    grid-column: span 8 / span 8;
+}
+
+.col-span-9 {
+    grid-column: span 9 / span 9;
+}
+
+.col-span-10 {
+    grid-column: span 10 / span 10;
+}
+
+.col-span-11 {
+    grid-column: span 11 / span 11;
+}
+
+.col-span-12 {
+    grid-column: span 12 / span 12;
+}
+
+/* Grid Column Start Positions */
+.col-start-1 {
+    grid-column-start: 1;
+}
+
+.col-start-2 {
+    grid-column-start: 2;
+}
+
+.col-start-3 {
+    grid-column-start: 3;
+}
+
+.col-start-4 {
+    grid-column-start: 4;
+}
+
+.col-start-5 {
+    grid-column-start: 5;
+}
+
+.col-start-6 {
+    grid-column-start: 6;
+}
+
+.col-start-7 {
+    grid-column-start: 7;
+}
+
+.col-start-8 {
+    grid-column-start: 8;
+}
+
+.col-start-9 {
+    grid-column-start: 9;
+}
+
+.col-start-10 {
+    grid-column-start: 10;
+}
+
+.col-start-11 {
+    grid-column-start: 11;
+}
+
+.col-start-12 {
+    grid-column-start: 12;
+}
+
+@media (max-width: 768px) {
+    .sm\:col-span-1 {
+        grid-column: span 1 / span 1;
+    }
+
+    .sm\:col-span-2 {
+        grid-column: span 2 / span 2;
+    }
+
+    .sm\:col-span-3 {
+        grid-column: span 3 / span 3;
+    }
+
+    .sm\:col-span-4 {
+        grid-column: span 4 / span 4;
+    }
+
+    .sm\:col-start-1 {
+        grid-column-start: 1;
+    }
+
+    .sm\:col-start-2 {
+        grid-column-start: 2;
+    }
+
+    .sm\:col-start-3 {
+        grid-column-start: 3;
+    }
+
+    .sm\:col-start-4 {
+        grid-column-start: 4;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .md\:col-span-1 {
+        grid-column: span 1 / span 1;
+    }
+
+    .md\:col-span-2 {
+        grid-column: span 2 / span 2;
+    }
+
+    .md\:col-span-3 {
+        grid-column: span 3 / span 3;
+    }
+
+    .md\:col-span-4 {
+        grid-column: span 4 / span 4;
+    }
+
+    .md\:col-span-5 {
+        grid-column: span 5 / span 5;
+    }
+
+    .md\:col-span-6 {
+        grid-column: span 6 / span 6;
+    }
+
+    .md\:col-span-7 {
+        grid-column: span 7 / span 7;
+    }
+
+    .md\:col-span-8 {
+        grid-column: span 8 / span 8;
+    }
+
+    .md\:col-start-1 {
+        grid-column-start: 1;
+    }
+
+    .md\:col-start-2 {
+        grid-column-start: 2;
+    }
+
+    .md\:col-start-3 {
+        grid-column-start: 3;
+    }
+
+    .md\:col-start-4 {
+        grid-column-start: 4;
+    }
+
+    .md\:col-start-5 {
+        grid-column-start: 5;
+    }
+
+    .md\:col-start-6 {
+        grid-column-start: 6;
+    }
+
+    .md\:col-start-7 {
+        grid-column-start: 7;
+    }
+
+    .md\:col-start-8 {
+        grid-column-start: 8;
+    }
+}
+
+/* ========== NAVBAR (DESKTOP) ========== */
+.navbar {
+    background-color: var(--main-black);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+    padding: 0 1rem;
+}
+
+.nav-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+    height: clamp(60px, 4vh + 2rem, 80px);
+}
+
+.nav-section {
+    flex: 1;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    gap: 1rem;
+}
+
+.nav-item {
+    font-family: var(--font-display);
+    color: var(--overlay-white);
+    text-decoration: none;
+    font-weight: normal;
+    font-size: var(--font-size-h5);
+    position: relative;
+    display: inline-block;
+    padding: 0.25rem 0;
+    text-align: center;
+}
+
+    .nav-item::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height: 2px;
+        width: 0;
+        background: var(--main-white);
+        transition: width 0.3s ease;
+    }
+
+    .nav-item:hover::after,
+    .dropdown:hover .nav-item::after {
+        width: 100%;
+    }
+
+/* ========== CENTERED LOGO - DESKTOP ========== */
+.logo-container {
+    position: absolute;
+    left: 50%;
+    top: 100%;
+    transform: translate(-50%, -40%);
+    z-index: 10;
+}
+
+.logo {
+    height: clamp(90px, 10vw, 120px); /* <== You can change logo size here */
+    transition: transform 0.3s ease, filter 0.3s ease;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.6));
+}
+
+.logo-container:hover .logo {
+    transform: scale(1.08);
+    filter: drop-shadow(0 0 4px white) brightness(1.05);
+}
+
+/* ========== DROPDOWN (DESKTOP) ========== */
+.dropdown {
+    position: relative;
+}
+
+.dropdown-content {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    transform-origin: top center;
+    background-color: var(--main-black);
+    display: none;
+    flex-direction: column;
+    animation: none; /* <-- disable CSS animation completely */
+    z-index: 99;
+    min-width: max-content;
+    font-family: var(--font-display);
+    font-size: 0.9rem; 
+    padding: 0.4rem 1rem;
+    text-align: center;
+    transition: background 0.2s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+}
+
+
+.dropdown:hover .dropdown-content {
+    display: flex;
+}
+
+.dropdown-content a {
+    font-family: var(--font-display);
+    color: var(--overlay-white);
+    text-decoration: none;
+    padding: 0.4rem 1rem;
+    font-size: var(--font-size-h7);
+    transition: background 0.2s ease;
+}
+
+    .dropdown-content a:hover {
+        background-color: var(--overlay-black);
+    }
+
+/* ========== MOBILE NAV: TOP & BOTTOM ========== */
+.mobile-top {
+    display: none;
+    background-color: var(--main-black);
+    padding: 0.1rem;
+    justify-content: center;
+    align-items: center;
+    height: 70px; /* set exact height */
+    overflow: visible; /* allow logo to overlap if needed */
+    position: relative;
+}
+
+.mobile-logo-link {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.logo-mobile {
+    height: clamp(90px, 12vw, 120px); /* <== You can change mobile logo size here */
+    transform: translateY(25%); /* <== You can adjust mobile logo position here */
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.5));
+    z-index: 99;
+}
+
+.mobile-bottom {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: none;
+    padding: 1rem;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+    .mobile-bottom.open {
+        display: none; /* hide hamburger area when menu is open */
+    }
+
+.hamburger {
+    background-color: var(--main-black); /* or --overlay-black for contrast */
+    border: none;
+    color: var(--main-white);
+    font-size: 1.5rem; /* reduce slightly */
+    line-height: 1;
+    padding: 0;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6); /* drop shadow added here */
+    z-index: 1001;
+    font-family: Arial, sans-serif;
+}
+
+/* ========== MOBILE MENU ========== */
+.mobile-menu {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    background: var(--main-black);
+    padding: 1.5rem 0;
+    animation: slideUp 0.3s ease-in-out;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    z-index: 998;
+}
+
+    .mobile-menu.show {
+        display: flex;
+    }
+
+    .mobile-menu a,
+    .dropdown-mobile span {
+        color: var(--overlay-white);
+        text-decoration: none;
+        font-family: var(--font-display);
+        font-size: var(--font-size-h5);
+        padding: 0.5rem 0;
+    }
+
+.dropdown-mobile span {
+    cursor: pointer;
+}
+
+.mobile-submenu {
+    display: none;
+    flex-direction: column;
+    margin-top: 0.25rem;
+}
+
+    .mobile-submenu.show {
+        display: flex;
+    }
+
+    .mobile-submenu a {
+        color: var(--overlay-white);
+        font-family: var(--font-regular);
+        text-decoration: none;
+        padding: 0.3rem 0;
+        font-size: var(--font-size-h7);
+    }
+
+/* ========== ANIMATIONS ========== */
+@keyframes dropdownFade {
+    from {
+        opacity: 0;
+        transform: translateY(-10%);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(40%);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+    .nav-wrapper,
+    .desktop-logo {
+        display: none;
+    }
+
+    .mobile-top,
+    .mobile-bottom {
+        display: flex;
+    }
+}
+
