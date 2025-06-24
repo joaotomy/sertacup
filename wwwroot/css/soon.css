@@ -1,0 +1,164 @@
+﻿@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
+@font-face {
+    font-family: 'Blockletter';
+    src: url('/fonts/Blockletter.woff2') format('woff2'), url('/fonts/Blockletter.woff') format('woff'), url('/fonts/Blockletter.otf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+:root {
+    /* Colors */
+    --main-black: #121212;
+    --main-white: #FBFBFB;
+    --overlay-black: #323232;
+    --overlay-white: #F1F1F1;
+    --live-red: #FF3A3A;
+    /* Fonts */
+    --font-display: 'Blockletter', sans-serif;
+    --font-regular: 'Montserrat', sans-serif;
+    --font-size-body: clamp(1rem, 0.8rem + 0.6vw, 1.125rem);
+    --font-size-caption: clamp(0.625rem, 0.5rem + 0.3vw, 0.8rem);
+    --font-size-h1: clamp(2.5rem, 4vw, 2.75rem);
+    --font-size-h2: clamp(2.125rem, 3.5vw, 2.5rem);
+    --font-size-h3: clamp(1.75rem, 3vw, 2.25rem);
+    --font-size-h4: clamp(1.25rem, 2.2vw, 1.75rem);
+    --font-size-h5: clamp(1.125rem, 2vw, 1.5rem);
+    --font-size-h6: clamp(1rem, 1.6vw, 1.375rem);
+    --font-size-h7: clamp(0.875rem, 1.2vw, 1.125rem);
+    --font-size-title: clamp(1.125rem, 1.4vw, 1.5rem);
+    --font-size-subtitle: clamp(1rem, 1.2vw, 1.375rem);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: var(--font-size-body);
+}
+
+body {
+    font-family: var(--font-regular);
+    background: url('/images/bg test.png') center center / cover no-repeat fixed;
+    overflow-x: hidden;
+}
+
+/* ===== Layout ===== */
+.soon-container {
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+}
+
+/* ===== Optional Background Image Overlay ===== */
+.soon-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 0;
+}
+
+/* ===== Text Content ===== */
+.soon-text {
+    margin-top: 5%;
+    position: relative;
+    z-index: 1;
+    padding: 2rem;
+    color: var(--main-white);
+}
+
+.soon-caption {
+    display: block;
+    font-family: var(--font-regular);
+    font-size: var(--font-size-h6);
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.soon-main {
+    font-family: var(--font-display);
+    font-size: clamp(7rem, 4vw, 10rem);
+    margin: 0;
+    line-height: 1;
+}
+
+.soon-footer-title {
+    margin-top: 8rem;
+    font-size: var(--font-size-h3);
+    font-family: var(--font-display);
+    letter-spacing: 0.5px;
+    line-height: 1;
+}
+
+.soon-footer-date {
+    font-size: var(--font-size-h7);
+    font-family: var(--font-display);
+    letter-spacing: 0.5px;
+}
+
+
+/* ===== Logos Section ===== */
+.soon-logos {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 2rem;
+    padding: 0.2rem;
+}
+
+    .soon-logos img {
+        height: 30px;
+        object-fit: contain;
+        filter: brightness(0) invert(1);
+        opacity: 0.9;
+        transition: transform 0.3s ease;
+    }
+        .soon-logos img:nth-child(2) {
+            filter:none;
+        }
+        .soon-logos img:hover {
+            transform: scale(1.05);
+            opacity: 1;
+        }
+
+/* ===== Social Icons Section ===== */
+.soon-icons {
+    margin-top: 0.5rem;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+}
+
+    .soon-icons img {
+        width: 28px;
+        height: 28px;
+        object-fit: contain;
+        padding: 0.1rem;
+        border-radius: 8px;
+        transition: transform 0.2s ease;
+        cursor: pointer;
+    }
+
+        .soon-icons img:hover {
+            transform: scale(1.1);
+        }
+
+/* ===== Canvas Background (3D) ===== */
+#cup-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}

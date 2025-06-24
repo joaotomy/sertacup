@@ -1,0 +1,98 @@
+﻿/* ========== HISTÓRIA PAGE STYLES ========== */
+
+.historia-section {
+    background-color: var(--main-black);
+    color: var(--main-white);
+    padding-block: 6rem;
+}
+
+.historia-title h2 {
+    font-family: var(--font-display);
+    font-size: var(--font-size-h2);
+    text-transform: uppercase;
+}
+
+.historia-text p {
+    font-family: var(--font-regular);
+    font-size: var(--font-size-body);
+    max-width: 60ch;
+}
+
+/* ========== VISÃO SECTION ========== */
+.visao-section {
+    background-color: var(--main-white);
+    color: var(--main-black);
+    padding-block: 6rem;
+}
+
+.visao-title h2 {
+    font-family: var(--font-display);
+    font-size: var(--font-size-h2);
+    text-transform: uppercase;
+}
+
+.visao-text p {
+    font-family: var(--font-regular);
+    font-size: var(--font-size-body);
+    max-width: 60ch;
+}
+
+/* ========== SOCIAL RESPONSIBILITY ========== */
+.social-section {
+    background-color: var(--overlay-white);
+    color: var(--main-black);
+    padding-block: 6rem;
+}
+
+.social-title h3 {
+    font-family: var(--font-display);
+    font-size: var(--font-size-h4);
+    text-transform: uppercase;
+}
+
+.social-text p {
+    font-family: var(--font-regular);
+    font-size: var(--font-size-body);
+    max-width: 50ch;
+}
+
+.social-logos {
+    display: flex;
+    gap: 2rem;
+    margin-top: 1.5rem;
+    align-items: center;
+}
+
+.social-logo {
+    height: 2.5rem;
+}
+
+/* ========== VENCEDORES SECTION ========== */
+.vencedores-section {
+    background-color: var(--main-black);
+    color: var(--main-white);
+    padding-block: 6rem;
+}
+
+.vencedores-title h2 {
+    font-family: var(--font-display);
+    font-size: var(--font-size-h2);
+    text-transform: uppercase;
+}
+
+.vencedores-text p {
+    font-family: var(--font-regular);
+    font-size: var(--font-size-body);
+    max-width: 60ch;
+}
+
+.vencedores-img {
+    margin-top: 3rem;
+    display: flex;
+    justify-content: center;
+}
+
+    .vencedores-img img {
+        max-width: 300px;
+        width: 100%;
+    }

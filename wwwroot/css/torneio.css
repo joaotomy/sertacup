@@ -142,7 +142,6 @@
     font-size: var(--font-size-h4);
     text-align: center;
     gap: 0.5rem;
-
 }
 
 .cal-score {
@@ -382,7 +381,8 @@ td.group-team-cell {
     .group-table td {
         height: 2rem; /* You can adjust this */
     }
-        .group-team-name {
+
+    .group-team-name {
         font-size: var(--font-size-h7);
     }
 
@@ -415,7 +415,6 @@ td.group-team-cell {
 }
 
 .place-2 {
-
 }
 
 .place-3 {
