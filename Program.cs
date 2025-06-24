@@ -32,4 +32,11 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
+app.MapGet("/myip", async (HttpContext context) =>
+{
+    using var httpClient = new HttpClient();
+    var ip = await httpClient.GetStringAsync("https://api.ipify.org");
+    await context.Response.WriteAsync($"Render Public IP: {ip}");
+});
+
 app.Run();
