@@ -23,8 +23,8 @@ namespace SertaCup_site.Models
         public bool interrompido { get; set; }
         public int campo {  get; set; }
         public int? grupo {  get; set; }
-        public string? situacao_precaria { get; set; }
 
+        public string?situacao_precaria { get; set; }
 
     }
 }

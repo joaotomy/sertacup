@@ -1,6 +1,6 @@
 ﻿namespace SertaCup_site.Models
 {
-    public class BexigaModel
+    public class LiveModel
     {
         public string Id { get; set; }
         public string equipa1 { get; set; }

@@ -23,7 +23,7 @@ namespace SertaCup_site.Controllers
 
         public IActionResult Torneio()
         {
-            
+
 
             var gruposDb = _context.Grupos.ToList();
             var classificacoesDb = _context.Classificacoes.ToList();
@@ -320,7 +320,7 @@ namespace SertaCup_site.Controllers
 
             if (equipa1Stats != null && equipa2Stats != null)
             {
-                
+
                 // Jogos feitos
                 equipa1Stats.jogos_feitos += 1;
                 equipa2Stats.jogos_feitos += 1;
@@ -383,11 +383,27 @@ namespace SertaCup_site.Controllers
         }*/
 
 
-        
+        public IActionResult Soon()
+        {
+            return View();
+        }
+
+        public IActionResult Historia()
+        {
+            return View();
+        }
+        public IActionResult Info()
+        {
+            return View();
+        }
+        public IActionResult Patrocinadores()
+        {
+            return View();
+        }
 
         public IActionResult Index()
         {
-            var model = new List<BexigaModel>();
+            var model = new List<LiveModel>();
             var jogos = _context.Game.ToList();
 
             foreach (var jogo in jogos)
@@ -409,20 +425,20 @@ namespace SertaCup_site.Controllers
                 {
                     tempoJogo = (DateTime.Now - DateTime.Now).ToString(@"mm\:ss");
                 }
-                    model.Add(new BexigaModel
-                    {
-                        Id = jogo.Id.ToString(),
-                        equipa1 = jogo.equipa1.ToString(),
-                        equipa2 = jogo.equipa2.ToString(),
-                        golos_equipa1 = jogo.golos_equipa1.ToString(),
-                        golos_equipa2 = jogo.golos_equipa2.ToString(),
-                        Tempo = tempoJogo,
-                        Estado = estado,
-                        Hora = jogo.hora_prevista.ToString(),
-                        grupo = jogo.grupo.ToString(),
-                        Fase = jogo.situacao_precaria
+                model.Add(new LiveModel
+                {
+                    Id = jogo.Id.ToString(),
+                    equipa1 = jogo.equipa1.ToString(),
+                    equipa2 = jogo.equipa2.ToString(),
+                    golos_equipa1 = jogo.golos_equipa1.ToString(),
+                    golos_equipa2 = jogo.golos_equipa2.ToString(),
+                    Tempo = tempoJogo,
+                    Estado = estado,
+                    Hora = jogo.hora_prevista.ToString(),
+                    grupo = jogo.grupo.ToString(),
+                    Fase = jogo.situacao_precaria
 
-                    });
+                });
             }
 
             return View(model);
