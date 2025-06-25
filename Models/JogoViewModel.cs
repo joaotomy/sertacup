@@ -17,6 +17,10 @@
         public List<string> MarcadoresEquipa1 { get; set; } = new();
         public List<string> MarcadoresEquipa2 { get; set; } = new();
 
-
+        public string? hora_inicio { get; set; }
+        public string? hora_inicio_2parte { get; set; }
+        public bool? primeira_parte_terminada { get; set; }
+        public bool? começado { get; set; }
+        public bool? terminado { get; set; }
     }
 }

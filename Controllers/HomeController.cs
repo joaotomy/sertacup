@@ -62,6 +62,7 @@ namespace SertaCup_site.Controllers
 
             // Construir os jogos
             var jogosVM = new List<JogoViewModel>();
+            var calendario = new List<Game>();
 
             foreach (var j in jogosDb)
             {
@@ -104,9 +105,34 @@ namespace SertaCup_site.Controllers
                     Estado = GetEstadoJogo(j),
                     Tipo = "Fase de Grupos",
                     MarcadoresEquipa1 = marcadoresEquipa1,
-                    MarcadoresEquipa2 = marcadoresEquipa2
+                    MarcadoresEquipa2 = marcadoresEquipa2,
+                    hora_inicio = j.hora_inicio.ToString(),
+                    começado = j.começado,
+                       
+
                 });
+
+                calendario.Add(new Game
+                {
+                    Id = j.Id,
+                    hora_prevista = j.hora_prevista,
+                    equipa1 = j.equipa1,
+                    equipa2 = j.equipa2,
+                    golos_equipa1 = j.golos_equipa1,
+                    golos_equipa2 = j.golos_equipa2,
+                    hora_inicio = j.hora_inicio,
+                    
+                    terminado = j.terminado,
+                    campo = j.campo,
+                    grupo = j.grupo,
+                    situacao_precaria = j.situacao_precaria,
+
+                });
+
+
             }
+
+           
 
             var viewModel = new TorneioViewModel
             {
@@ -120,9 +146,10 @@ namespace SertaCup_site.Controllers
         // Função auxiliar para descrever o estado do jogo
         private string GetEstadoJogo(Game j)
         {
-            if (j.terminado) return "Final";
-            if (j.começado && !j.primeira_parte_terminada) return "1ª Parte";
-            if (j.primeira_parte_terminada && !j.terminado) return "2ª Parte";
+            if (j.terminado) return "Resultado Final";
+            if (j.começado && !j.primeira_parte_terminada) return "1ª P";
+            if (j.começado && j.primeira_parte_terminada && j.hora_inicio_2parte == null) return "Intervalo";
+            if (j.primeira_parte_terminada && !j.terminado && j.hora_inicio_2parte != null) return "2ª P";
             return j.hora_prevista.ToString("HH:mm");
         }
 
