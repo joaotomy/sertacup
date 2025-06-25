@@ -14,22 +14,183 @@
     --overlay-black: #323232;
     --overlay-white: #F1F1F1;
     --live-red: #FF3A3A;
+    /* Champions League - Prismatic */
+    --champs-solid: #a7a7c5;
+    --champs-gradient: linear-gradient(135deg, #dadcfb, #d4e7e7, #e2cedf);
+    --champs-accent: #e2ebf0;
+    --champs-glass-overlay: rgba(255, 255, 255, 0.2);
+    --champs-blur: blur(10px);
+    --champs-text: #fefeff;
+    /* Europa League - Diamond */
+    --eu-solid: #4367F6;
+    --eu-gradient: linear-gradient(135deg, #3c63f0, #82a5ff);
+    --eu-accent: #82a5ff;
+    --eu-glass-overlay: rgba(255, 255, 255, 0.1);
+    --eu-blur: blur(6px);
+    /* Conference League - Emerald */
+    --conf-solid: #2dbd6e;
+    --conf-gradient: linear-gradient(135deg, #1cbf63, #8fffb8);
+    --conf-accent: #8fffb8;
+    --conf-glass-overlay: rgba(255, 255, 255, 0.1);
+    --conf-blur: blur(6px);
+    /* Fem League - Ruby */
+    --fem-solid: #c62828;
+    --fem-gradient: linear-gradient(135deg, #b71c1c, #ff8a80);
+    --fem-accent: #ff8a80;
+    --fem-glass-overlay: rgba(255, 255, 255, 0.08);
+    --fem-blur: blur(6px);
     /* Fonts */
     --font-display: 'Blockletter', sans-serif;
     --font-regular: 'Montserrat', sans-serif;
     --font-size-body: clamp(1rem, 0.8rem + 0.6vw, 1.125rem); /* readable on all */
     --font-size-caption: clamp(0.625rem, 0.5rem + 0.3vw, 0.8rem); /* ~10–13px */
 
-    --font-size-h1: clamp(2.5rem, 4vw, 2.75rem);
-    --font-size-h2: clamp(2.125rem, 3.5vw, 2.5rem);
-    --font-size-h3: clamp(1.75rem, 3vw, 2.25rem);
-    --font-size-h4: clamp(1.25rem, 2.2vw, 1.75rem); /* min reduced from 1.5rem */
-    --font-size-h5: clamp(1.125rem, 2vw, 1.5rem); /* min reduced from 1.375rem */
-    --font-size-h6: clamp(1rem, 1.6vw, 1.375rem); /* min reduced from 1.25rem */
-    --font-size-h7: clamp(0.875rem, 1.2vw, 1.125rem); /* min reduced from 1.125rem */
-
+    --font-size-h1: clamp(3rem, 4.5vw, 3.25rem); /* base increased */
+    --font-size-h2: clamp(2.625rem, 4vw, 2.875rem);
+    --font-size-h3: clamp(2.25rem, 3.5vw, 2.5rem);
+    --font-size-h4: clamp(1.875rem, 3vw, 2.125rem);
+    --font-size-h5: clamp(1.625rem, 2.5vw, 1.875rem);
+    --font-size-h6: clamp(1.375rem, 2vw, 1.625rem);
+    --font-size-h7: clamp(1.125rem, 1.5vw, 1.375rem);
+    --font-size-h8: clamp(0.875rem, 1.2vw, 1.125rem);
+    --font-size-h9: clamp(0.75rem, 1vw, 1rem);
+    --font-size-h10: clamp(0.625rem, 0.8vw, 0.875rem);
     --font-size-title: clamp(1.125rem, 1.4vw, 1.5rem); /* subtle */
     --font-size-subtitle: clamp(1rem, 1.2vw, 1.375rem); /* tighter on small screens */
+}
+
+/* === Background Utility Classes === */
+.bg-champs {
+    background: var(--champs-gradient);
+    backdrop-filter: var(--champs-blur);
+}
+
+.bg-eu {
+    background: var(--eu-gradient);
+    backdrop-filter: var(--eu-blur);
+}
+
+.bg-conf {
+    background: var(--conf-gradient);
+    backdrop-filter: var(--conf-blur);
+}
+
+.bg-fem {
+    background: var(--fem-gradient);
+    backdrop-filter: var(--fem-blur);
+}
+
+/* === Transparent Glass Overlay === */
+.overlay-champs::before,
+.overlay-eu::before,
+.overlay-conf::before,
+.overlay-fem::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.overlay-champs::before {
+    background: var(--champs-glass-overlay);
+    backdrop-filter: var(--champs-blur);
+}
+
+.overlay-eu::before {
+    background: var(--eu-glass-overlay);
+    backdrop-filter: var(--eu-blur);
+}
+
+.overlay-conf::before {
+    background: var(--conf-glass-overlay);
+    backdrop-filter: var(--conf-blur);
+}
+
+.overlay-fem::before {
+    background: var(--fem-glass-overlay);
+    backdrop-filter: var(--fem-blur);
+}
+
+/* === Radial Gradient Glows === */
+.radial-champs {
+    background: radial-gradient(circle at center, #ffffff20 0%, transparent 80%), var(--champs-gradient);
+}
+
+.radial-eu {
+    background: radial-gradient(circle at center, #ffffff15 0%, transparent 80%), var(--eu-gradient);
+}
+
+.radial-conf {
+    background: radial-gradient(circle at center, #ffffff10 0%, transparent 80%), var(--conf-gradient);
+}
+
+.radial-fem {
+    background: radial-gradient(circle at center, #ffffff10 0%, transparent 80%), var(--fem-gradient);
+}
+
+/* === Light Flicker Animations === */
+@keyframes flicker {
+    0%, 100% {
+        opacity: 1;
+    }
+
+    45% {
+        opacity: 0.6;
+    }
+
+    55% {
+        opacity: 0.8;
+    }
+
+    60% {
+        opacity: 0.5;
+    }
+}
+
+.flicker-champs {
+    animation: flicker 2s infinite ease-in-out;
+    background: var(--champs-gradient);
+}
+
+.flicker-eu {
+    animation: flicker 2s infinite ease-in-out;
+    background: var(--eu-gradient);
+}
+
+.flicker-conf {
+    animation: flicker 2s infinite ease-in-out;
+    background: var(--conf-gradient);
+}
+
+.flicker-fem {
+    animation: flicker 2s infinite ease-in-out;
+    background: var(--fem-gradient);
+}
+
+/* === Animated Glow Rings (optional) === */
+@keyframes glow-ring {
+    0% {
+        box-shadow: 0 0 0px transparent;
+    }
+
+    50% {
+        box-shadow: 0 0 10px 5px var(--main-white);
+    }
+
+    100% {
+        box-shadow: 0 0 0px transparent;
+    }
+}
+
+.glow-ring {
+    animation: glow-ring 3s infinite ease-in-out;
+    border-radius: 50%;
+    position: relative;
+    z-index: 2;
 }
 
 * {
@@ -39,7 +200,7 @@
 }
 
 html {
-    font-size: var(--font-size-body);
+    font-size: 16px;
 }
 
 body {
@@ -49,6 +210,7 @@ body {
 }
 
 /* ========== GLOBAL GRID SYSTEM ========== */
+
 .grid-container {
     display: grid;
     gap: 0 24px;
@@ -74,6 +236,7 @@ body {
     .sm\:grid-cols-4 {
         grid-template-columns: repeat(4, 1fr);
     }
+
     .grid-container {
         padding-left: 16px;
         padding-right: 16px;
@@ -380,7 +543,7 @@ body {
     z-index: 99;
     min-width: max-content;
     font-family: var(--font-display);
-    font-size: 0.9rem; 
+    font-size: 0.9rem;
     padding: 0.4rem 1rem;
     text-align: center;
     transition: background 0.2s ease;
@@ -550,4 +713,3 @@ body {
         display: flex;
     }
 }
-

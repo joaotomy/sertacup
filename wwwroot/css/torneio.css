@@ -1,5 +1,6 @@
 ﻿.selector-section {
     padding: 4rem 2rem 0rem 2rem;
+    z-index: 6;
 }
 
     .selector-section .tabs {
@@ -64,27 +65,55 @@
 }
 
 /* === Cal Section =================================== */
+.cal-sticky-buffer .active {
+    display: block;
+}
+
+.cal-sticky-buffer {
+    display: none;
+    position: sticky;
+    top: 0;
+    margin-top: -140px;
+    height: 140px;
+    width: 100%;
+    background: var(--main-white);
+    z-index: 5;
+    pointer-events: none;
+}
 
 .cal-fixed-header {
     position: sticky;
-    top: 0;
+    top: 140px;
+    z-index: 7;
     background-color: var(--main-white);
     color: var(--main-black);
     text-align: center;
     padding: 0.75rem 1rem;
     font-family: var(--font-display);
     font-size: var(--font-size-h3);
-    z-index: 10;
     border-bottom: 2px solid var(--overlay-black);
 }
 
-.cal-scrollable {
-    max-height: 80vh;
-    overflow-y: auto;
-    padding: 1rem;
+.cal-day {
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    padding-bottom: 2rem;
+}
+
+.cal-time-header {
+    position: sticky;
+    top: 220px;
+    background: var(--main-white);
+    z-index: 6;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: var(--font-size-subtitle);
+    font-weight: bold;
+    color: var(--main-black);
+    padding: 0.5rem 1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: opacity 0.2s ease;
 }
 
 .cal-time-block {
@@ -95,32 +124,17 @@
     width: 100%;
     padding-bottom: 3rem;
     text-transform: uppercase;
+    z-index: 3;
 }
-
-.cal-time-header {
-    position: sticky;
-    top: var(--cal-header-offset, 2.75rem);
-    background: var(--main-white);
-    z-index: 5;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: var(--font-size-subtitle);
-    font-weight: bold;
-    color: var(--main-black);
-    padding-bottom: 0.25rem;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-
 
 .cal-livetag {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
     color: var(--live-red);
-    font-weight: bold;
     font-size: var(--font-size-caption);
-    display: none; /* hidden by default */
+    font-family: var(--font-display);
+    display: none;
 }
 
 
@@ -144,12 +158,25 @@
     gap: 0.5rem;
 }
 
+.cal-display {
+    background-color: var(--overlay-black);
+    padding: 0.5rem 2rem;
+    color: var(--overlay-white);
+}
+
+.cal-game-status {
+    font-size: var(--font-size-caption);
+    font-family: var(--font-regular);
+}
+
+.cal-game-clock {
+    font-family: var(--font-display);
+    font-size: var(--font-size-h7);
+}
+
 .cal-score {
-    min-width: 3rem;
     text-align: center;
     font-size: var(--font-size-h5);
-    background-color: var(--overlay-black);
-    padding: 1rem;
 }
 
 .cal-details {
@@ -163,6 +190,14 @@
     padding: 0.5rem;
     border-radius: 0 0 8px 8px;
     border-top: 1px solid var(--main-black);
+}
+
+.cal-group {
+    text-align: left;
+}
+
+.cal-field {
+    text-align: right;
 }
 
 
@@ -179,10 +214,61 @@
     display: block;
 }
 
-@media (max-width: 768px) {
-    .cal-scrollable {
-        padding: 0.5rem;
+/* Game state classes */
+.cal-game live .cal-game-status {
+    font-size: 0.1rem;
+}
+
+.cal-game .cal-game-clock.live-blink {
+    color: var(--live-red);
+    font-size: var(--font-size-h6);
+    animation: blink 1s infinite;
+}
+
+.cal-game .cal-game-clock.pen-blink {
+    color: var(--live-red);
+    animation: blink 0.8s infinite;
+    font-weight: bold;
+}
+
+.cal-game .cal-game-clock.interval-blink {
+    color: var(--live-red);
+    animation: pulse-line 2s infinite;
+    font-weight: bold;
+}
+
+.winner {
+    color: var(--main-white);
+    font-weight: bold;
+}
+
+.loser {
+    opacity: 0.5;
+}
+
+@keyframes blink {
+    0%, 100% {
+        opacity: 1;
     }
+
+    50% {
+        opacity: 0.3;
+    }
+}
+
+@keyframes pulse-line {
+    0%, 100% {
+        opacity: 1;
+        border-bottom: 1px solid var(--live-red);
+    }
+
+    50% {
+        opacity: 0.5;
+        border-bottom: none;
+    }
+}
+
+@media (max-width: 768px) {
 
     .cal-teams {
         font-size: 1rem;
@@ -262,8 +348,12 @@ td.group-team-cell {
 
 .group-table th {
     font-weight: normal;
-    padding: 0.5rem 0.5rem;
 }
+
+    .group-table th:first-child {
+        font-weight: normal;
+        padding: 0.5rem 1rem;
+    }
 
     .group-table th:first-child,
     .group-table td:first-child {
@@ -287,7 +377,6 @@ td.group-team-cell {
     background-color: var(--main-black);
     color: var(--main-white);
     text-align: left;
-    padding: 0.75rem 1rem;
     border-right: 1px solid var(--main-white);
 }
 
@@ -374,6 +463,11 @@ td.group-team-cell {
 @media (max-width: 768px) {
     .group-team-name {
         font-size: var(--font-size-h7);
+    }
+
+    .group-table th:nth-child(6) {
+        font-size: 0.5rem;
+        text-align: center;
     }
 }
 
@@ -566,7 +660,7 @@ td.group-team-cell {
 .ff-team-name {
     flex: 1;
     font-family: var(--font-display);
-    font-size: var(--font-size-h7);
+    font-size: var(--font-size-h8);
 }
 
 .ff-team-score {
@@ -688,23 +782,7 @@ td.group-team-cell {
 
 /* === Media Fixes === */
 
-@media (max-width: 1024px) {
-    .ff-league-scroll {
-        overflow-x: auto;
-        flex-wrap: nowrap;
-    }
-
-    .ff-round-column {
-        min-width: 35vw;
-        flex: 0 0 auto;
-    }
-
-    .ff-vertical-separator {
-        display: none;
-    }
-}
-
-@media (max-width: 768px) {
+@media (min-width: 769px) and (max-width: 1024px) {
     .ff-league-scroll {
         flex-direction: row;
         overflow-x: auto;
@@ -712,7 +790,134 @@ td.group-team-cell {
         width: 100%;
         gap: 1rem;
         scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        padding: 0;
+        align-items: stretch;
     }
+
+    .ff-round-wrapper {
+        flex: 0 0 50%;
+        scroll-snap-align: start;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        height: 100%;
+        min-height: 90vh
+    }
+
+    .ff-round-column {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        flex: 1;
+        width: 100%;
+    }
+
+    .ff-round-title {
+        align-self: flex-start;
+        margin-top: 1rem;
+    }
+
+    .ff-game-box {
+        width: auto;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        align-items: start;
+        margin: 0 auto;
+    }
+
+    .ff-game-stack {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .ff-round-column:has(.ff-final-round) .ff-game-stack {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+
+        .ff-round-column:has(.ff-final-round)
+        .ff-game-stack .ff-game-box {
+            gap: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+            .ff-round-column:has(.ff-final-round) .ff-game-stack .ff-game-box:first-child {
+                grid-column: span 2;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+                .ff-round-column:has(.ff-final-round)
+                .ff-game-stack .ff-game-box:first-child .ff-team-name {
+                    font-size: var(--font-size-h7);
+                    text-align: center;
+                }
+
+                .ff-round-column:has(.ff-final-round)
+                .ff-game-stack .ff-game-box:first-child .ff-team-score {
+                    font-size: var(--font-size-h7);
+                }
+
+
+            .ff-round-column:has(.ff-final-round)
+            .ff-game-stack .ff-game-box:last-child {
+                grid-column: 1 / -1;
+                display: flex;
+                justify-content: center;
+                width: 100%;
+                max-width: 150px;
+                margin: 0 auto;
+            }
+
+    .ff-game-card {
+        margin: 0;
+        width: 100%;
+    }
+
+    .ff-vertical-separator,
+    .ff-horizontal-separator {
+        display: none;
+    }
+
+    .gap-level-1 .ff-game-stack {
+        gap: 2rem;
+    }
+
+    .gap-level-2 .ff-game-stack {
+        gap: 1rem;
+    }
+
+    .gap-level-3 .ff-game-stack {
+        gap: 0.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .ff-league-scroll {
+        flex-direction: row;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        width: 100%;
+        gap: 1rem;
+        padding: 0;
+        align-items: stretch;
+    }
+
+        .ff-league-scroll::-webkit-scrollbar {
+            display: none;
+        }
 
     .ff-round-wrapper {
         flex: 0 0 100%;
@@ -720,16 +925,129 @@ td.group-team-cell {
         display: flex;
         flex-direction: column;
         align-items: center;
+        justify-content: flex-start;
+        align-items: center;
+        height: 100%;
+        min-height: 90vh
     }
 
     .ff-round-column {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        flex: 1;
         width: 100%;
-        max-width: 100%;
-        padding: 1rem;
+    }
+
+    .ff-round-title {
+        align-self: flex-start;
+        margin-top: 1rem;
+        font-size: clamp(1.625rem, 1.07375rem + 2.45vw, 2.25rem);
+    }
+
+    .ff-final-round {
+        font-size: var(--font-size-h2);
+        margin-bottom: 1rem;
+    }
+
+    .ff-game-stack {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
     }
 
     .ff-game-box {
-        max-width: 100%;
+        width: auto;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        align-items: start;
+        margin: 0 auto;
+    }
+
+    .ff-game-card {
+        padding: clamp(0.001rem, 0.001rem + 1.96vw, 0.5rem) clamp(0.001rem, 0.001rem + 7.84vw, 2rem);
+    }
+
+    .ff-team-logo {
+        width: 16px;
+        height: 16px;
+    }
+
+    .ff-team-name {
+        font-size: clamp(0.75rem, 0.41875rem + 1.47vw, 1.125rem);
+    }
+
+    .ff-team-score {
+        font-size: clamp(0.75rem, 0.41875rem + 1.47vw, 1.125rem);
+    }
+
+    .ff-separator {
+        height: clamp(0.75rem, 0.5294rem + 0.98vw, 1rem);
+    }
+
+    .ff-round-column:has(.ff-final-round) .ff-game-stack {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+
+        .ff-round-column:has(.ff-final-round)
+        .ff-game-stack .ff-game-box {
+            gap: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+            .ff-round-column:has(.ff-final-round)
+            .ff-game-stack .ff-game-box:first-child {
+                grid-column: span 2;
+                display: flex;
+                justify-content: center;
+            }
+
+                .ff-round-column:has(.ff-final-round)
+                .ff-game-stack .ff-game-box:first-child .ff-team-name {
+                    font-size: var(--font-size-h6);
+                    text-align: center;
+                }
+
+                .ff-round-column:has(.ff-final-round)
+                .ff-game-stack .ff-game-box:first-child .ff-team-score {
+                    font-size: var(--font-size-h6);
+                }
+
+                .ff-round-column:has(.ff-final-round)
+                .ff-game-stack .ff-game-box:first-child .ff-separator {
+                    height: 18px;
+                }
+
+            .ff-round-column:has(.ff-final-round)
+            .ff-game-stack .ff-game-box:last-child {
+                grid-column: 1 / -1;
+                display: flex;
+                justify-content: center;
+                width: 100%;
+                max-width: clamp(150px, 61.8px + 24.5vw, 250px);
+                margin: 0 auto;
+            }
+
+
+
+    .gap-level-1 .ff-game-stack {
+        gap: 2rem; /* was 11rem  */
+    }
+
+    .gap-level-2 .ff-game-stack {
+        gap: 1rem; /* was 5.5rem  */
+    }
+
+    .gap-level-3 .ff-game-stack {
+        gap: 0.5rem; /* was 1rem  */
     }
 
     .ff-vertical-separator,
@@ -739,5 +1057,79 @@ td.group-team-cell {
 
     .ff-league-scroll::-webkit-scrollbar {
         display: none;
+    }
+
+    .selector-section .tab-button {
+        line-height: 1.5rem;
+    }
+}
+
+
+@media (min-width: 1024px) and (max-width: 1440px) {
+    .ff-league-title {
+        margin-bottom: 0.5rem; /* was 16px */
+    }
+
+    .ff-league-scroll {
+        padding: 0 0.1rem; /* was 1rem */
+    }
+
+    .ff-game-box {
+        gap: 0.5rem; /* was 1rem */
+
+        padding: 0.5rem 0; /* was 1rem 0.2rem */
+    }
+
+    .ff-game-caption {
+        font-size: 0.5rem; /* was var(--font-size-caption) */
+    }
+
+    .ff-game-status {
+        height: 0.7rem; /* was 1.1rem */
+    }
+
+    .ff-team-logo {
+        width: 20px;
+        height: 20px;
+    }
+    /* were 24px each  */
+
+    .ff-team-name {
+        font-size: clamp(0.625rem, calc(-0.6125rem + 1.93vw), 1.125rem);
+    }
+
+    .ff-team-score {
+        font-size: var(--font-size-h8); /* was var(--font-size-subtitle) */
+    }
+
+    .ff-separator {
+        height: 12px; /* was 16px */
+
+        margin: 0 0.3rem; /* was 0 0.5rem  */
+    }
+
+    .ff-game-live {
+        gap: 0.2rem; /* was 0.4rem  */
+
+        font-size: 0.5rem; /* was var(--font-size-caption) */
+        height: 0.7rem; /* added  */
+    }
+
+    .ff-live-dot {
+        width: 6px;
+        height: 6px;
+    }
+    /* were 8px each  */
+
+    .gap-level-1 .ff-game-stack {
+        gap: 6rem; /* was 11rem  */
+    }
+
+    .gap-level-2 .ff-game-stack {
+        gap: 3.5rem; /* was 5.5rem  */
+    }
+
+    .gap-level-3 .ff-game-stack {
+        gap: 0.5rem; /* was 1rem  */
     }
 }
