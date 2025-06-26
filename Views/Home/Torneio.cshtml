@@ -59,6 +59,10 @@
 
 								@foreach (var jogoObj in faseGrupo.OrderBy(j => j.HoraPrevista))
 								{
+									if (jogoObj.Jogo.equipa1 == 0 || jogoObj.Jogo.equipa2 == 0)
+									{
+										continue;
+									}
 									var j = jogoObj.Jogo;
 									var jvm = Model.Jogos.FirstOrDefault(x => x.Id == j.Id.ToString());
 									var estado = jvm?.Estado?.ToLower() ?? "";
@@ -84,7 +88,7 @@
 									<div class="cal-game @estado" data-start="@j.hora_inicio" data-date="@jogoObj.HoraPrevista.ToString("yyyy-MM-dd")" data-hour="@hora" data-estado="@jvm?.Estado" onclick="@(j.começado == true ? "toggleScorers(this)" : "")">
 										<div class="cal-teams">
 											<div class="cal-team-block @class1">
-												<img src="/images/teams/@(Uri.EscapeDataString(jvm?.equipa1 ?? "") + " logo.png")" alt="@jvm?.equipa1" class="cal-team-logo" />
+												<img src="/images/teams/@(Uri.EscapeDataString(jvm?.equipa1 ?? "")) + " logo.png"" alt="@jvm?.equipa1" class="cal-team-logo" />
 												<span class="cal-team-name">@jvm?.equipa1</span>
 											</div>
 
@@ -97,7 +101,7 @@
 											</div>
 
 											<div class="cal-team-block @class2">
-												<img src="/images/teams/@(Uri.EscapeDataString(jvm?.equipa2 ?? "") + " logo.png")" alt="@jvm?.equipa2" class="cal-team-logo" />
+												<img src="/images/teams/@(Uri.EscapeDataString(jvm?.equipa2 ?? "")) + " logo.png"" alt="@jvm?.equipa2" class="cal-team-logo" />
 												<span class="cal-team-name">@jvm?.equipa2</span>
 											</div>
 										</div>
@@ -324,13 +328,13 @@
 																	</div>
 																	<div class="ff-game-box-inner">
 																		<div class="ff-team-block @class1">
-																			<img src="/images/teams/@(Uri.EscapeDataString(jogo.equipa1 ?? "") + " logo.png")" alt="@jogo.equipa1" class="ff-team-logo" />
+																			<img src="/images/teams/@(Uri.EscapeDataString(jogo.equipa1 ?? "")) + " logo.png"" alt="@jogo.equipa1" class="ff-team-logo" />
 																			<span class="ff-team-name"><span>@jogo.equipa1</span></span>
 																			<div class="ff-separator"></div>
 																			<span class="ff-team-score">@g1</span>
 																		</div>
 																		<div class="ff-team-block @class2">
-																			<img src="/images/teams/@(Uri.EscapeDataString(jogo.equipa2 ?? "") + " logo.png")" alt="@jogo.equipa2" class="ff-team-logo" />
+																			<img src="/images/teams/@(Uri.EscapeDataString(jogo.equipa2 ?? "")) + " logo.png"" alt="@jogo.equipa2" class="ff-team-logo" />
 																			<span class="ff-team-name"><span>@jogo.equipa2</span></span>
 																			<div class="ff-separator"></div>
 																			<span class="ff-team-score">@g2</span>
@@ -581,7 +585,7 @@
 				el.classList.toggle("expanded");
 			};
 
-			// === Start Interval Updates ===
+			// === Start Interval Updates ==
 			function startLiveCheckLoop() {
 				setInterval(() => {
 					applyGameStateClasses();
