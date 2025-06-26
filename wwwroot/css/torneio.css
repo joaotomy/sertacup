@@ -135,7 +135,6 @@
     color: var(--live-red);
     font-size: var(--font-size-h8);
     font-family: var(--font-display);
-    display: flex;
     align-items: center;
     gap: 0.25rem;
 }
