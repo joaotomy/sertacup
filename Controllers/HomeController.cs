@@ -73,21 +73,23 @@ namespace SertaCup_site.Controllers
                 }*/
 
                 var marcadoresBrutos = _context.Marcador
-                    .Where(m => m.jogo_id == j.Id)
-                    .Join(_context.Player,
-                          m => m.marcador,
-                          p => p.Id,
-                          (m, p) => new { Nome = p.Nome, EquipaId = m.equipa })
-                    .ToList();
+    .Where(m => m.jogo_id == j.Id)
+    .Join(_context.Player,
+          m => m.marcador,
+          p => p.Id,
+          (m, p) => new { Nome = p.Nome, EquipaId = m.equipa })
+    .ToList();
 
                 var marcadoresEquipa1 = marcadoresBrutos
                     .Where(m => m.EquipaId == j.equipa1)
-                    .Select(m => $"{m.Nome} ⚽")
+                    .GroupBy(m => m.Nome)
+                    .Select(g => $"{g.Key} {string.Concat(Enumerable.Repeat("⚽", g.Count()))}")
                     .ToList();
 
                 var marcadoresEquipa2 = marcadoresBrutos
                     .Where(m => m.EquipaId == j.equipa2)
-                    .Select(m => $"{m.Nome} ⚽")
+                    .GroupBy(m => m.Nome)
+                    .Select(g => $"{g.Key} {string.Concat(Enumerable.Repeat("⚽", g.Count()))}")
                     .ToList();
 
                 jogosVM.Add(new JogoViewModel
@@ -108,8 +110,6 @@ namespace SertaCup_site.Controllers
                     MarcadoresEquipa2 = marcadoresEquipa2,
                     hora_inicio = j.hora_inicio.ToString(),
                     começado = j.começado,
-                       
-
                 });
 
                 calendario.Add(new Game
@@ -121,7 +121,7 @@ namespace SertaCup_site.Controllers
                     golos_equipa1 = j.golos_equipa1,
                     golos_equipa2 = j.golos_equipa2,
                     hora_inicio = j.hora_inicio,
-                    
+
                     terminado = j.terminado,
                     campo = j.campo,
                     grupo = j.grupo,
@@ -132,7 +132,7 @@ namespace SertaCup_site.Controllers
 
             }
 
-           
+
 
             var viewModel = new TorneioViewModel
             {
@@ -475,8 +475,7 @@ namespace SertaCup_site.Controllers
                 });
             }
 
-            // return View(model);
-            return View("soon");
+            return View(model);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

@@ -71,11 +71,11 @@
 
 .cal-sticky-buffer {
     display: none;
-    position: sticky;
+    position: fixed; /* changed from sticky */
     top: 0;
-    margin-top: -140px;
+    left: 0;
+    width: 100vw; /* force full viewport width */
     height: 140px;
-    width: 100%;
     background: var(--main-white);
     z-index: 5;
     pointer-events: none;
@@ -97,7 +97,6 @@
 .cal-day {
     display: flex;
     flex-direction: column;
-    padding-bottom: 2rem;
 }
 
 .cal-time-header {
@@ -114,6 +113,7 @@
     padding: 0.5rem 1rem;
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     transition: opacity 0.2s ease;
+    border-radius: 0 0 8px 8px;
 }
 
 .cal-time-block {
@@ -122,7 +122,7 @@
     flex-direction: column;
     gap: 1rem;
     width: 100%;
-    padding-bottom: 3rem;
+    padding-bottom: 2.5rem;
     text-transform: uppercase;
     z-index: 3;
 }
@@ -132,9 +132,19 @@
     left: 50%;
     transform: translateX(-50%);
     color: var(--live-red);
-    font-size: var(--font-size-caption);
+    font-size: var(--font-size-h8);
     font-family: var(--font-display);
-    display: none;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.live-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--live-red);
+    animation: blink 1s infinite;
 }
 
 
@@ -153,20 +163,57 @@
     display: grid;
     grid-template-columns: 1fr auto 1fr;
     align-items: center;
-    font-size: var(--font-size-h4);
     text-align: center;
     gap: 0.5rem;
+}
+
+.cal-team-block {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: center;
+    text-align: center;
+    flex-wrap: nowrap;
+}
+
+.cal-team-logo {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+}
+
+.cal-team-name {
+    display: inline-block;
+    font-size: var(--font-size-h4);
+    vertical-align: middle;
 }
 
 .cal-display {
     background-color: var(--overlay-black);
     padding: 0.5rem 2rem;
     color: var(--overlay-white);
+    min-width: 12rem;
+}
+
+.cal-game-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.live .cal-game-info {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
 }
 
 .cal-game-status {
     font-size: var(--font-size-caption);
     font-family: var(--font-regular);
+}
+
+.atrasado .cal-game-status {
+    font-size: 0.5rem;
 }
 
 .cal-game-clock {
@@ -176,43 +223,43 @@
 
 .cal-score {
     text-align: center;
-    font-size: var(--font-size-h5);
+    font-size: var(--font-size-h4);
 }
 
 .cal-details {
+    border-radius: 0 0 8px 8px;
+    border-top: 1px solid var(--main-black);
+    font-size: var(--font-size-caption);
+}
+
+.cal-scorers {
+    font-size: 0.75rem;
+}
+
+.cal-details, .cal-scorers {
     display: flex;
     justify-content: space-between;
     font-family: var(--font-regular);
-    font-size: var(--font-size-caption);
     color: var(--overlay-white);
-    padding-top: 0.25rem;
     background-color: var(--overlay-black);
-    padding: 0.5rem;
-    border-radius: 0 0 8px 8px;
-    border-top: 1px solid var(--main-black);
+    padding: 0.5rem 1rem;
 }
 
-.cal-group {
+.scorer-left,
+.scorer-right {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.cal-group .score-left {
     text-align: left;
 }
 
-.cal-field {
+.cal-field .score-right {
     text-align: right;
 }
 
-
-.cal-scorers {
-    font-size: var(--font-size-caption);
-    background: var(--overlay-black);
-    padding: 0.5rem;
-    border-radius: 0 0 8px 8px;
-    color: var(--main-white);
-    display: none;
-}
-
-.cal-game.expanded .cal-scorers {
-    display: block;
-}
 
 /* Game state classes */
 .cal-game live .cal-game-status {
@@ -221,25 +268,39 @@
 
 .cal-game .cal-game-clock.live-blink {
     color: var(--live-red);
-    font-size: var(--font-size-h6);
+    font-size: var(--font-size-h7);
     animation: blink 1s infinite;
 }
 
-.cal-game .cal-game-clock.pen-blink {
+.cal-game .cal-game-status.pen-blink {
     color: var(--live-red);
     animation: blink 0.8s infinite;
+    font-family: var(--font-display);
+    font-size: var(--font-size-h8);
+}
+
+.cal-game .cal-game-status.interval-blink {
+    font-family: var(--font-display);
+    font-size: var(--font-size-h8);
+    color: var(--live-red);
+    position: relative;
+    color: transparent;
+    background: linear-gradient( 120deg, var(--live-red) 20%, #ff7676 40%, var(--live-red) 60% );
+    background-size: 200% auto;
+    background-clip: text;
+    -webkit-background-clip: text;
+    animation: pulse-wave 1.8s linear infinite;
     font-weight: bold;
 }
 
-.cal-game .cal-game-clock.interval-blink {
-    color: var(--live-red);
-    animation: pulse-line 2s infinite;
-    font-weight: bold;
+.finished .cal-game-status {
+    font-family: var(--font-display);
+    font-size: var(--font-size-h8);
 }
 
 .winner {
     color: var(--main-white);
-    font-weight: bold;
+    text-shadow: 0 0 4px rgba(255, 255, 255, 0.1), 0 0 8px rgba(255, 200, 200, 0.2), 0 0 12px rgba(255, 180, 180, 0.1);
 }
 
 .loser {
@@ -256,34 +317,88 @@
     }
 }
 
-@keyframes pulse-line {
-    0%, 100% {
-        opacity: 1;
-        border-bottom: 1px solid var(--live-red);
+@keyframes pulse-wave {
+    0% {
+        background-position: 200% 0;
     }
 
-    50% {
-        opacity: 0.5;
-        border-bottom: none;
+    100% {
+        background-position: -200% 0;
     }
 }
 
 @media (max-width: 768px) {
 
-    .cal-teams {
-        font-size: 1rem;
-        grid-template-columns: 1fr;
-        gap: 0.25rem;
+    .cal-sticky-buffer {
+        height: 70px
     }
 
-    .cal-details {
-        flex-direction: column;
-        gap: 0.25rem;
-        align-items: center;
+    .cal-fixed-header {
+        top: 0;
+    }
+
+    .cal-time-header {
+        font-size: 0.8rem;
+        top: 77px;
+    }
+
+    .cal-time-block {
+        padding-bottom: 2rem;
+    }
+
+    .cal-team-logo {
+        width: 16px;
+        height: 16px;
+    }
+
+    .cal-team-name {
+        font-size: clamp(0.875rem, calc(0.21325rem + 2.941vw), 1.625rem);
+    }
+
+    .cal-game-status {
+        font-size: var(--font-size-caption);
+    }
+
+    .atrasado .cal-game-status {
+        font-size: 0.4rem;
+    }
+
+    .cal-game-clock {
+        font-size: var(--font-size-h8);
     }
 
     .cal-score {
-        font-size: 1.125rem;
+        font-size: var(--font-size-h7);
+    }
+
+    .cal-scorers {
+        font-size: 0.5rem;
+    }
+
+    .cal-details {
+        font-size: var(--font-size-caption);
+    }
+
+    .cal-game .cal-game-clock.live-blink {
+        font-size: var(--font-size-h8);
+    }
+
+    .cal-game .cal-game-status.pen-blink {
+        font-size: var(--font-size-h10);
+    }
+
+    .cal-game .cal-game-status.interval-blink {
+        font-size: var(--font-size-h10);
+    }
+
+    .finished .cal-game-status {
+        font-family: var(--font-display);
+        font-size: var(--font-size-h10);
+    }
+
+    .cal-display {
+        min-width: 5rem;
+        padding: 0.2rem 0.5rem;
     }
 }
 
@@ -421,7 +536,7 @@ td.group-team-cell {
 }
 
 .group-team-name {
-    font-size: var(--font-size-h6);
+    font-size: clamp(0.75rem, calc(-0.317rem + 2.22vw), 1.625rem);
     font-family: var(--font-display);
     white-space: nowrap;
     overflow: hidden;
@@ -461,8 +576,12 @@ td.group-team-cell {
 /* === Responsive Adjustments === */
 
 @media (max-width: 768px) {
+    .group-table td {
+        height: 2rem;
+    }
+
     .group-team-name {
-        font-size: var(--font-size-h7);
+        font-size: clamp(0.625rem, calc(-0.03675rem + 2.941vw), 1.375rem);
     }
 
     .group-table th:nth-child(6) {
@@ -477,7 +596,6 @@ td.group-team-cell {
     }
 
     .group-team-name {
-        font-size: var(--font-size-h7);
     }
 
     .group-table th,

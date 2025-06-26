@@ -43,7 +43,7 @@
     --font-display: 'Blockletter', sans-serif;
     --font-regular: 'Montserrat', sans-serif;
     --font-size-body: clamp(1rem, 0.8rem + 0.6vw, 1.125rem); /* readable on all */
-    --font-size-caption: clamp(0.625rem, 0.5rem + 0.3vw, 0.8rem); /* ~10–13px */
+    --font-size-caption: clamp(0.4rem, 0.5rem + 0.3vw, 0.8rem); /* ~10–13px */
 
     --font-size-h1: clamp(3rem, 4.5vw, 3.25rem); /* base increased */
     --font-size-h2: clamp(2.625rem, 4vw, 2.875rem);
@@ -578,6 +578,7 @@ body {
     height: 70px; /* set exact height */
     overflow: visible; /* allow logo to overlap if needed */
     position: relative;
+    z-index: 6;
 }
 
 .mobile-logo-link {
