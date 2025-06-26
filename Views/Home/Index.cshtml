@@ -32,14 +32,38 @@
     <div class="col-span-12 live-grid">
         @{
             var now = DateTime.Now;
-            var jogosComData = new List<KeyValuePair<SertaCup_site.Models.LiveModel, DateTime>>();
+            var jogosComData = new List<KeyValuePair<LiveModel, DateTime>>();
 
             foreach (var j in Model)
             {
                 if (DateTime.TryParse(j.Hora, out var parsed))
                 {
-                    jogosComData.Add(new KeyValuePair<SertaCup_site.Models.LiveModel, DateTime>(j, parsed));
+                    jogosComData.Add(new KeyValuePair<LiveModel, DateTime>(j, parsed));
                 }
+            }
+
+            var groupedByDay = jogosComData
+            .GroupBy(j => j.Value.Date)
+            .OrderBy(g => g.Key)
+            .ToList();
+
+            List<KeyValuePair<LiveModel, DateTime>> jogosDiaSelecionado = null;
+
+            // Find today’s group with live/upcoming games
+            foreach (var group in groupedByDay)
+            {
+                if (group.Key == now.Date && group.Any(g => g.Value >= now.AddMinutes(-50)))
+                {
+                    jogosDiaSelecionado = group.ToList();
+                    break;
+                }
+            }
+
+            // Otherwise, pick the next closest day with games
+            if (jogosDiaSelecionado == null)
+            {
+                jogosDiaSelecionado = groupedByDay.FirstOrDefault(g => g.Key > now.Date)?.ToList()
+                ?? new List<KeyValuePair<LiveModel, DateTime>>();
             }
 
             var aoVivo = jogosComData
@@ -61,28 +85,56 @@
         {
             var jogo = jogoPair.Key;
             var dataHora = jogoPair.Value;
-            var diffMin = (int)(now - dataHora).TotalMinutes;
-            var isLive = diffMin >= 0 && diffMin <= 50;
-            var tempo = isLive ? $"{Math.Min(diffMin, 50)}'" : dataHora.ToString("HH:mm");
-            var fase = jogo.grupo == "0" ? "FINAL" : "GRUPO " + jogo.grupo;
+            var fase = jogo.grupo == "0" ? "FASE FINAL" : "GRUPO " + jogo.grupo;
+
+            var isLive = jogo.Estado is "1ªP" or "2ªP" or "INTERVALO" or "ATRASADO";
+            var isFinal = jogo.Estado == "Resultado Final";
+            var isUpcoming = !isLive && !isFinal;
+
+            var displayStatus = isFinal ? "Resultado Final" :
+            isLive ? jogo.Estado :
+            dataHora.ToString("HH:mm");
+
+            var g1 = int.TryParse(jogo.golos_equipa1, out var golos1) ? golos1 : 0;
+            var g2 = int.TryParse(jogo.golos_equipa2, out var golos2) ? golos2 : 0;
+
+            var class1 = isFinal ? (g1 > g2 ? "winner" : g1 < g2 ? "loser" : "") : "";
+            var class2 = isFinal ? (g2 > g1 ? "winner" : g2 < g1 ? "loser" : "") : "";
+
+            var sanitized1 = Uri.EscapeDataString(jogo.equipa1 ?? "").ToLower().Replace(" ", "-");
+            var sanitized2 = Uri.EscapeDataString(jogo.equipa2 ?? "").ToLower().Replace(" ", "-");
+
+
 
             <div class="live-card">
                 <div class="game-caption">
                     <span class="left group">@fase</span>
+                    @{
+                        var clockClass = isFinal ? "final"
+                        : jogo.Estado == "INTERVALO" ? "intervalo"
+                        : isUpcoming ? "future"
+                        : "";
+                    }
+
                     <span class="right">
-                        <span class="phase">@(isLive ? "1ª P" : "—")</span>
-                        <span class="clock">@tempo</span>
+                        <span class="phase">
+                            @if (isLive)
+                            {
+                                <span class="live-dot"></span>
+                            }
+                            <span class="clock @clockClass">@displayStatus</span>
+                        </span>
                     </span>
                 </div>
                 <div class="game-box">
-                    <div class="team-block">
-                        <img src="/images/teams/team-a.png" alt="@jogo.equipa1" class="team-logo" />
+                    <div class="team-block @class1">
+                        <img src="/images/teams/@(sanitized1 + ".png")" alt="@jogo.equipa1" class="team-logo" />
                         <span class="team-name"><span>@jogo.equipa1</span></span>
                         <div class="separator"></div>
                         <span class="team-score">@jogo.golos_equipa1</span>
                     </div>
-                    <div class="team-block">
-                        <img src="/images/teams/team-b.png" alt="@jogo.equipa2" class="team-logo" />
+                    <div class="team-block @class2">
+                        <img src="/images/teams/@(sanitized2 + ".png")" alt="@jogo.equipa2" class="team-logo" />
                         <span class="team-name"><span>@jogo.equipa2</span></span>
                         <div class="separator"></div>
                         <span class="team-score">@jogo.golos_equipa2</span>
@@ -92,6 +144,7 @@
         }
     </div>
 </section>
+
 
 
 <!-- Blank Section 1 -->

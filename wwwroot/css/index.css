@@ -300,6 +300,18 @@
     min-width: 0;
 }
 
+    .team-block.winner {
+        background: linear-gradient(90deg, #5380F7, #3F5AD2), var(--main-black);
+        color: var(--main-white);
+        filter: brightness(1.1);
+    }
+
+    .team-block.loser {
+        background: var(--overlay-black);
+        color: var(--overlay-white);
+        opacity: 0.6;
+    }
+
 .team-logo {
     width: 18px;
     height: 18px;
