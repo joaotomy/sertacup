@@ -475,7 +475,8 @@ namespace SertaCup_site.Controllers
                 });
             }
 
-            return View(model);
+            //return View(model);
+            return View("Soon");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
