@@ -6,6 +6,7 @@
     font-weight: normal;
     font-style: normal;
 }
+
 :root {
     /* Colors */
     --main-black: #121212;
@@ -29,89 +30,97 @@
     --font-size-subtitle: clamp(1rem, 1.2vw, 1.375rem);
 }
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-html {
-    font-size: var(--font-size-body);
-}
-
 body {
     font-family: var(--font-regular);
-    background: url('/images/bg test.png') center center / cover no-repeat fixed;
-    overflow-x: hidden;
-}
-
-/* ===== Layout ===== */
-.soon-container {
-    text-align: center;
+    background: url('/images/bg test.png') no-repeat center center;
+    background-size: cover;
+    color: var(--main-white);
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
     position: relative;
-    z-index: 1;
-    width: 100%;
-    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-/* ===== Optional Background Image Overlay ===== */
+.soon-overlay {
+    background: rgba(0, 0, 0, 0.8);
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 1;
+}
+
 .soon-image {
     position: absolute;
     top: 0;
     left: 0;
     height: 100%;
     width: 100%;
-    background: rgba(0, 0, 0, 0.5);
+    object-fit: cover;
     z-index: 0;
 }
 
-/* ===== Text Content ===== */
-.soon-text {
-    margin-top: 5%;
+.soon-container {
     position: relative;
-    z-index: 1;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     padding: 2rem;
-    color: var(--main-white);
+    text-align: center;
+    max-width: 90vw;
+}
+
+.soon-text,
+.soon-footer,
+.soon-logos,
+.soon-icons {
+    z-index: 2;
+}
+
+.soon-text {
+    line-height: 1;
 }
 
 .soon-caption {
-    display: block;
     font-family: var(--font-regular);
-    font-size: var(--font-size-h6);
+    font-size: clamp(0.5rem, 2vw, 2rem);
     font-weight: bold;
-    letter-spacing: 1px;
 }
 
 .soon-main {
     font-family: var(--font-display);
-    font-size: clamp(7rem, 4vw, 10rem);
-    margin: 0;
-    line-height: 1;
+    font-size: clamp(4rem, 10vw, 8rem);
+}
+
+.soon-footer {
+    margin-top: 2rem;
+    font-family: var(--font-display);
 }
 
 .soon-footer-title {
-    margin-top: 8rem;
     font-size: var(--font-size-h3);
-    font-family: var(--font-display);
-    letter-spacing: 0.5px;
     line-height: 1;
 }
 
 .soon-footer-date {
     font-size: var(--font-size-h7);
-    font-family: var(--font-display);
-    letter-spacing: 0.5px;
 }
 
-
-/* ===== Logos Section ===== */
 .soon-logos {
-    margin-top: 1rem;
+    margin-top: 2rem;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-wrap: wrap;
-    gap: 2rem;
+    gap: 1.5rem;
     padding: 0.2rem;
 }
 
@@ -122,27 +131,27 @@ body {
         opacity: 0.9;
         transition: transform 0.3s ease;
     }
+
         .soon-logos img:nth-child(2) {
-            filter:none;
+            filter: none;
         }
+
         .soon-logos img:hover {
             transform: scale(1.05);
             opacity: 1;
         }
 
-/* ===== Social Icons Section ===== */
 .soon-icons {
-    margin-top: 0.5rem;
+    margin: 1rem 0;
     display: flex;
     justify-content: center;
-    gap: 2rem;
+    gap: 1.5rem;
 }
 
     .soon-icons img {
         width: 28px;
         height: 28px;
         object-fit: contain;
-        padding: 0.1rem;
         border-radius: 8px;
         transition: transform 0.2s ease;
         cursor: pointer;
@@ -151,14 +160,3 @@ body {
         .soon-icons img:hover {
             transform: scale(1.1);
         }
-
-/* ===== Canvas Background (3D) ===== */
-#cup-canvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-}

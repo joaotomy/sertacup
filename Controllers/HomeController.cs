@@ -137,7 +137,8 @@ namespace SertaCup_site.Controllers
             var viewModel = new TorneioViewModel
             {
                 Grupos = gruposVM,
-                Jogos = jogosVM
+                Jogos = jogosVM,
+                Calendario = calendario
             };
 
             return View(viewModel);
@@ -474,7 +475,8 @@ namespace SertaCup_site.Controllers
                 });
             }
 
-            return View(model);
+            // return View(model);
+            return View("soon");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
