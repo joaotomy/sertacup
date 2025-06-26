@@ -49,7 +49,7 @@
 				
 						@foreach (var faseGrupo in horaGrupo.GroupBy(j => j.Fase))
 						{
-							var horaTexto = horaGrupo.First().HoraPrevista.ToString("HH:MM");
+							var horaTexto = horaGrupo.First().HoraPrevista.ToString("HH:mm");
 							<div class="cal-time-block" data-hour="@hora" data-day="@dia.Key.ToString("yyyy-MM-dd")">
 								<div class="cal-time-header">
 									<span class="cal-time">@horaTexto</span>
@@ -482,13 +482,12 @@
 			}
 
 			// === Sticky Header Updater ===
-			window.addEventListener('scroll', () => {
-				// Game Day Header
-					for (let i = allDays.length - 1; i >= 0; i--) {
-			const day = allDays[i];
-			const rect = day.getBoundingClientRect();
-			if (rect.top <= 100) {
-				const newHeader = day.querySelector('.cal-fixed-header')?.textContent;
+		window.addEventListener('scroll', () => {
+			let found = false;
+			for (let i = 0; i < allDays.length; i++) {
+				const rect = allDays[i].getBoundingClientRect();
+				if (rect.top > 100) break; // passed current view
+				const newHeader = allDays[i].querySelector('.cal-fixed-header')?.textContent;
 				if (newHeader && newHeader !== currentDay) {
 					dayHeader.style.opacity = 0;
 					setTimeout(() => {
@@ -497,9 +496,18 @@
 					}, 150);
 					currentDay = newHeader;
 				}
-				break;
+				found = true;
 			}
-		}
+			// If scrolled above all days
+			if (!found && currentDay) {
+				dayHeader.style.opacity = 0;
+				setTimeout(() => {
+					dayHeader.textContent = "";
+					dayHeader.style.opacity = 1;
+				}, 150);
+				currentDay = "";
+			}
+		});
 
 				// Time Block Header
 				allBlocks.forEach(block => {
