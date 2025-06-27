@@ -42,7 +42,7 @@
 			@foreach (var dia in dias)
 			{
 				var gruposValidos = dia
-				.Where(j => !string.IsNullOrWhiteSpace(j.Jogo.equipa1) && !string.IsNullOrWhiteSpace(j.Jogo.equipa2))
+				.Where(j => !string.IsNullOrWhiteSpace(j.Jogo.equipa1) && !string.IsNullOrWhiteSpace(j.Jogo.equipa2) || j.Jogo.equipa1 != "0" || j.Jogo.equipa2 != "0")
 				.ToList();
 
 				if (!gruposValidos.Any()) continue;
@@ -70,11 +70,12 @@
 								@foreach (var jogoObj in faseGrupo.OrderBy(j => j.HoraPrevista))
 								{
 
-									if (string.IsNullOrWhiteSpace(j.equipa1) || string.IsNullOrWhiteSpace(j.equipa2))
+									var j = jogoObj.Jogo;
+									if (string.IsNullOrWhiteSpace(j.equipa1) || string.IsNullOrWhiteSpace(j.equipa2) || j.equipa1 == "0" || j.equipa2 == "0")
 									{
 										continue;
 									}
-									var j = jogoObj.Jogo;
+									
 									
 									var estadoRaw = j.Estado?.Trim().ToLower() ?? "";
 									var horaPrevista = j.horaPrevista;
@@ -369,7 +370,7 @@
 															if (jogo != null)
 															{
 																var isFinished = jogo.Estado == "Resultado Final";
-																var isOngoing = jogo.Estado == "A Decorrer";
+																var isOngoing = (jogo.Estado == "Intervalo" || jogo.Estado == "1ªP" || jogo.Estado == "2ªP");
 																int.TryParse(jogo.golos_equipa1, out var g1);
 																int.TryParse(jogo.golos_equipa2, out var g2);
 																var class1 = isFinished ? (g1 > g2 ? "ff-winner" : g1 < g2 ? "ff-loser" : "") : "";
