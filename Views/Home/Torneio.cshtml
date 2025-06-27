@@ -426,9 +426,7 @@
 
 @section Scripts {
 	<script>
-		// ==Selector Scripts===============
-
-		// Tab toggle logic
+				// Tab toggle logic
 		document.addEventListener('DOMContentLoaded', () => {
 			const buttons = document.querySelectorAll('.tab-button');
 			const contents = document.querySelectorAll('.tab-content');
@@ -438,28 +436,25 @@
 				btn.addEventListener('click', () => {
 					const target = btn.dataset.target;
 
-					// Toggle tab visibility
 					buttons.forEach(b => b.classList.remove('active'));
 					contents.forEach(c => c.classList.remove('active'));
 					btn.classList.add('active');
 					document.getElementById(target).classList.add('active');
 
-					// Show sticky buffer only on calendario tab
 					if (stickyBuffer) {
 						stickyBuffer.style.display = target === 'calendario' ? 'block' : 'none';
 					}
 				});
 			});
 
-			// Initial load from ?tab= param
 			const urlParams = new URLSearchParams(window.location.search);
 			const selectedTab = urlParams.get('tab') || 'calendario';
 			const initialBtn = document.querySelector(`.tab-button[data-target="${selectedTab}"]`);
-			if (initialBtn) initialBtn.click(); // triggers logic above
+			if (initialBtn) initialBtn.click();
 		});
 
-		// ==FF Scripts=================
-				document.querySelectorAll('.ff-round-column').forEach(roundCol => {
+		// == FF Scripts (Fase Final) ==
+		document.querySelectorAll('.ff-round-column').forEach(roundCol => {
 			let hasLiveOrFinishedGame = false;
 
 			roundCol.querySelectorAll('.ff-game').forEach(game => {
@@ -467,7 +462,6 @@
 				const statusBox = game.querySelector('.ff-game-status');
 				const blocks = game.querySelectorAll('.ff-team-block');
 
-				// == LIVE GAMES ==
 				if (estado === 'a decorrer') {
 					hasLiveOrFinishedGame = true;
 					if (statusBox) {
@@ -475,7 +469,6 @@
 					}
 				}
 
-				// == FINISHED GAMES ==
 				if (estado === 'final' && blocks.length === 2) {
 					hasLiveOrFinishedGame = true;
 					const g1 = parseInt(game.dataset.golos1);
@@ -507,9 +500,54 @@
 			const allDays = document.querySelectorAll('.cal-day');
 			const allBlocks = document.querySelectorAll('.cal-time-block');
 			const allGames = document.querySelectorAll('.cal-game');
+			hidePastDays();
 
 			let currentDay = "";
 			let currentTime = "";
+
+					const showPastBtn = document.getElementById("show-past-games");
+		const backToLiveBtn = document.getElementById("back-to-live");
+
+		// Oculta todos os dias passados (sem jogos ao vivo ou futuros)
+		function hidePastDays() {
+			allDays.forEach(day => {
+				const games = day.querySelectorAll('.cal-game');
+				const anyFuture = Array.from(games).some(game => {
+					const estado = game.dataset.estado?.toLowerCase();
+					const start = new Date(game.dataset.start);
+					return (
+						estado === "1ªp" || estado === "2ªp" || estado === "intervalo" ||
+						(start >= now)
+					);
+				});
+				if (!anyFuture) {
+					day.classList.add("hidden-day");
+				}
+			});
+			showPastBtn.classList.remove("hidden");
+			backToLiveBtn.classList.add("hidden");
+		}
+
+		// Mostra todos os dias
+		function showAllDays() {
+			document.querySelectorAll(".cal-day.hidden-day").forEach(d => d.classList.remove("hidden-day"));
+			showPastBtn.classList.add("hidden");
+			backToLiveBtn.classList.remove("hidden");
+		}
+
+		// Voltar ao jogo ao vivo
+		function scrollBackToLive() {
+			const target = document.querySelector(".cal-game.live");
+			if (target) {
+				target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+			}
+			showPastBtn.classList.remove("hidden");
+			backToLiveBtn.classList.add("hidden");
+			hidePastDays();
+		}
+
+		showPastBtn.addEventListener("click", showAllDays);
+		backToLiveBtn.addEventListener("click", scrollBackToLive);
 
 			// === Auto Scroll to Live or Closest ===
 			const now = new Date();

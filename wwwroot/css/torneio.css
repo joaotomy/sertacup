@@ -103,6 +103,10 @@
         display: none;
     }
 
+    .cal-day.hidden-day {
+        display: none;
+    }
+
 .cal-time-header {
     position: sticky;
     top: 220px;
