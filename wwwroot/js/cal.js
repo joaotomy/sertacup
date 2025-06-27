@@ -12,27 +12,6 @@
     let currentDay = "";
     let currentTime = "";
 
-    // Auto Scroll to Live or Closest
-    let scrollTarget = null;
-    let closestDiff = Infinity;
-
-    allGames.forEach(game => {
-        const startTime = new Date(game.dataset.start);
-        const diffMin = (startTime - now) / 60000;
-        if (diffMin <= 0 && diffMin >= -50 && !scrollTarget) {
-            scrollTarget = game;
-        }
-        if (!scrollTarget && diffMin >= 0 && diffMin < closestDiff) {
-            scrollTarget = game;
-            closestDiff = diffMin;
-        }
-    });
-
-    if (scrollTarget) {
-        scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        setTimeout(() => window.dispatchEvent(new Event('scroll')), 500);
-    }
-
     // Sticky Headers
     window.addEventListener('scroll', () => {
         let found = false;
