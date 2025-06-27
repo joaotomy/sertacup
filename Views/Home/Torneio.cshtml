@@ -256,8 +256,12 @@
 
 
 		<div id="fases-finais" class="tab-content">
-			<div class="ff-section-title">Todas as Ligas</div>
-
+			<div class="ff-section-title">
+				<button data-target="champs">LIGA DOS CAMPEÕES</button>
+				<button data-target="europa">LIGA EUROPA</button>
+				<button data-target="conference">LIGA CONFERÊNCIA</button>
+				<button data-target="feminina">LIGA FEMININA</button>
+			</div>
 			@{
 				var isMobile = Context.Request.Query["mobile"].ToString().ToLower() == "true";
 
@@ -301,9 +305,9 @@
 						new { Title = "Finais", Side = "center", BoxCount = 4, GamesPerBox = 1, Jogos = new[] { "81", "82", "83", "88" }, GapLevel = 3 }
 						} : new[] {
 						new { Title = "1ª Ronda", Side = "left", BoxCount = 1, GamesPerBox = 2, Jogos = new[] { "49", "50" }, GapLevel = 0 },
-						new { Title = "2ª Ronda", Side = "left", BoxCount = 1, GamesPerBox = 2, Jogos = new[] { "69", "70" }, GapLevel = 1 },
+						new { Title = "2ª Ronda", Side = "left", BoxCount = 2, GamesPerBox = 1, Jogos = new[] { "69", "70" }, GapLevel = 1 },
 						new { Title = "Finais", Side = "center", BoxCount = 4, GamesPerBox = 1, Jogos = new[] { "81", "82", "83", "88" }, GapLevel = 3 },
-						new { Title = "2ª Ronda", Side = "right", BoxCount = 1, GamesPerBox = 2, Jogos = new[] { "71", "72" }, GapLevel = 1 },
+						new { Title = "2ª Ronda", Side = "right", BoxCount = 2, GamesPerBox = 1, Jogos = new[] { "71", "72" }, GapLevel = 1 },
 						new { Title = "1ª Ronda", Side = "right", BoxCount = 1, GamesPerBox = 2, Jogos = new[] { "51", "52" }, GapLevel = 0 }
 						},
 					["conference"] = isMobile ? new[] {
@@ -312,9 +316,9 @@
 						new { Title = "Finais", Side = "center", BoxCount = 4, GamesPerBox = 1, Jogos = new[] { "84", "85", "86", "87" }, GapLevel = 3 }
 						} : new[] {
 						new { Title = "1ª Ronda", Side = "left", BoxCount = 1, GamesPerBox = 2, Jogos = new[] { "53", "54" }, GapLevel = 0 },
-						new { Title = "2ª Ronda", Side = "left", BoxCount = 1, GamesPerBox = 2, Jogos = new[] { "65", "66" }, GapLevel = 1 },
+						new { Title = "2ª Ronda", Side = "left", BoxCount = 2, GamesPerBox = 1, Jogos = new[] { "65", "66" }, GapLevel = 1 },
 						new { Title = "Finais", Side = "center", BoxCount = 4, GamesPerBox = 1, Jogos = new[] { "84", "85", "86", "87" }, GapLevel = 3 },
-						new { Title = "2ª Ronda", Side = "right", BoxCount = 1, GamesPerBox = 2, Jogos = new[] { "67", "68" }, GapLevel = 1 },
+						new { Title = "2ª Ronda", Side = "right", BoxCount = 2, GamesPerBox = 1, Jogos = new[] { "67", "68" }, GapLevel = 1 },
 						new { Title = "1ª Ronda", Side = "right", BoxCount = 1, GamesPerBox = 2, Jogos = new[] { "55", "56" }, GapLevel = 0 }
 						},
 					["feminina"] = isMobile ? new[] {
@@ -341,8 +345,10 @@
 
 			@foreach (var league in allLeagues)
 			{
-				<div class="ff-league-section">
+				<div class="ff-league-seperator"></div>
+				<div class="ff-league-section" id="@league.Key">
 					<div class="ff-league-title">@league.Name</div>
+					<div class="ff-title-seperator"></div>
 					<div class="ff-league-scroll-wrapper">
 						<div class="ff-league-scroll">
 							@for (int r = 0; r < leagueRounds[league.Key].Length; r++)
@@ -414,10 +420,6 @@
 											}
 										</div>
 									</div>
-									@if (!isMobile && round.Side == "left")
-									{
-										<div class="ff-vertical-separator"></div>
-									}
 								</div>
 							}
 						</div>
@@ -459,6 +461,16 @@
 			const selectedTab = urlParams.get('tab') || 'calendario';
 			const initialBtn = document.querySelector(`.tab-button[data-target="${selectedTab}"]`);
 			if (initialBtn) initialBtn.click();
+		});
+
+				 document.querySelectorAll(".ff-section-title button[data-target]").forEach(btn => {
+			btn.addEventListener("click", () => {
+				const id = btn.getAttribute("data-target");
+				const target = document.getElementById(id);
+				if (target) {
+					target.scrollIntoView({ behavior: "smooth", block: "start" });
+				}
+			});
 		});
 
 		// == FF Scripts (Fase Final) ==

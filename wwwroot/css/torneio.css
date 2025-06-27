@@ -667,9 +667,29 @@ td.group-team-cell {
 
 .ff-section-title {
     padding: 1rem;
+    font-family: var(--font-display);
     font-size: var(--font-size-caption);
-    border-bottom: 1px outset black;
+    border-bottom: 1px dashed black;
+    text-align: center;
+    justify-content: center;
 }
+
+.ff-title-seperator {
+    width: 50%;
+    height: 1px;
+    border-bottom: 1px dashed var(--overlay-black);
+    margin: 0 auto;
+    opacity: 0.4;
+}
+
+.ff-league-seperator {
+    width: 90%;
+    height: 1px;
+    border-bottom: 1px dashed var(--overlay-black);
+    margin: 0 auto;
+    opacity: 0.4;
+}
+
 
 .ff-league-section {
     padding: 0.5rem;
