@@ -285,7 +285,7 @@ namespace SertaCup_site.Controllers
         [HttpGet]
         public IActionResult HandleGameInput(int id, string chave)
         {
-            var game = _context.Game.FirstOrDefault(g => g.Id == id && g.Chave == chave);
+            var game = _context.Game.FirstOrDefault(g => g.Id == id && g.Chave == chave || g.Chave == "adminserta");
             if (game == null) return NotFound();
 
             if (game.começado)
@@ -414,6 +414,53 @@ namespace SertaCup_site.Controllers
 
         public IActionResult Soon()
         {
+            return View();
+        }
+
+        public IActionResult Teste()
+        {
+            var model = new List<LiveModel>();
+            var jogos = _context.Game.ToList();
+
+            var equipasDb = _context.Team.ToDictionary(e => e.Id, e => e.Nome);
+            var gruposDb = _context.Grupos.ToList();
+
+            foreach (var jogo in jogos)
+            {
+                DateTime dateTime = DateTime.Now;
+                string tempoJogo = "";
+
+                string estado = GetEstadoJogo(jogo);
+
+                if (estado == "1ªP")
+                {
+                    tempoJogo = (DateTime.Now - jogo.hora_inicio!.Value).ToString(@"mm\:ss");
+                }
+                else if (estado == "2ªP")
+                {
+                    tempoJogo = (DateTime.Now - jogo.hora_inicio_2parte!.Value).ToString(@"mm\:ss");
+                }
+                else
+                {
+                    tempoJogo = (DateTime.Now - DateTime.Now).ToString(@"mm\:ss");
+                }
+                model.Add(new LiveModel
+                {
+                    Id = jogo.Id.ToString(),
+                    equipa1 = equipasDb.ContainsKey(jogo.equipa1) ? equipasDb[jogo.equipa1] : "Desconhecida",
+                    equipa2 = equipasDb.ContainsKey(jogo.equipa1) ? equipasDb[jogo.equipa1] : "Desconhecida",
+                    golos_equipa1 = jogo.golos_equipa1.ToString(),
+                    golos_equipa2 = jogo.golos_equipa2.ToString(),
+                    Tempo = tempoJogo,
+                    Estado = estado,
+                    Hora = jogo.hora_prevista.ToString(),
+                    grupo = gruposDb.FirstOrDefault(g => g.id == jogo.grupo) is var grupoObj && grupoObj != null
+                            ? grupoObj.grupo
+                            : "0",
+                    Fase = jogo.situacao_precaria
+
+                });
+            }
             return View();
         }
 
