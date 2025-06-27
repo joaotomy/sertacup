@@ -99,6 +99,10 @@
     flex-direction: column;
 }
 
+    .cal-day.past.hidden {
+        display: none;
+    }
+
 .cal-time-header {
     position: sticky;
     top: 220px;
@@ -115,6 +119,48 @@
     transition: opacity 0.2s ease;
     border-radius: 0 0 8px 8px;
 }
+
+    .cal-time-header .cal-livetag {
+        display: none;
+    }
+
+        .cal-time-header .cal-livetag.visible {
+            display: inline-flex;
+        }
+
+.cal-sticky-buttons {
+    position: sticky;
+    top: calc(220px + 2rem); /* ajusta se necessário abaixo da cal-time-header */
+    z-index: 8;
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(6px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border-radius: 0 0 12px 12px;
+}
+
+.cal-toggle-button {
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 0.6rem 1.2rem;
+    font-family: var(--font-display);
+    font-size: 0.9rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+    .cal-toggle-button:hover {
+        background-color: rgba(255, 0, 0, 0.8);
+    }
+
+    .cal-toggle-button.hidden {
+        display: none;
+    }
 
 .cal-time-block {
     position: relative;
@@ -216,7 +262,7 @@
     font-family: var(--font-regular);
 }
 
-.atrasado .cal-game-status {
+.cal-game.atrasado .cal-game-status {
     font-size: 0.5rem;
 }
 
@@ -238,19 +284,25 @@
     border-radius: 0 0 8px 8px;
     border-top: 1px solid var(--main-black);
     font-size: var(--font-size-caption);
-}
-
-.cal-scorers {
-    font-size: 0.75rem;
+    display: flex;
 }
 
 .cal-details, .cal-scorers {
-    display: flex;
     justify-content: space-between;
     font-family: var(--font-regular);
     color: var(--overlay-white);
     background-color: var(--overlay-black);
     padding: 0.5rem 1rem;
+}
+
+.cal-scorers {
+    display: none;
+    transition: all 0.3s ease;
+    font-size: 0.75rem;
+}
+
+.cal-game.expanded .cal-scorers {
+    display: flex;
 }
 
 .scorer-left,
@@ -270,7 +322,7 @@
 
 
 /* Game state classes */
-.cal-game live .cal-game-status {
+.cal-game.live .cal-game-status {
     font-size: 0.1rem;
 }
 
@@ -301,7 +353,7 @@
     font-weight: bold;
 }
 
-.finished .cal-game-status {
+.cal-game.finished .cal-game-status {
     font-family: var(--font-display);
     font-size: var(--font-size-h8);
 }
@@ -367,7 +419,7 @@
         font-size: var(--font-size-caption);
     }
 
-    .atrasado .cal-game-status {
+    .cal-game.atrasado .cal-game-status {
         font-size: 0.4rem;
     }
 
@@ -399,7 +451,7 @@
         font-size: var(--font-size-h10);
     }
 
-    .finished .cal-game-status {
+    .cal-game.finished .cal-game-status {
         font-family: var(--font-display);
         font-size: var(--font-size-h10);
     }

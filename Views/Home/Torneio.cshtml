@@ -39,8 +39,16 @@
 			}
 			@foreach (var dia in dias)
 			{
-				var dataFormatada = dia.Key.ToString("dd/MMM", new System.Globalization.CultureInfo("pt-PT")).ToUpper();
-				<div class="cal-day" data-date="@dia.Key.ToString("yyyy-MM-dd")">
+				var gruposValidos = dia
+				.SelectMany(j => j.Fase == "FASE FINAL" || j.Fase == "FASE DE GRUPOS" ? new[] { j } : Array.Empty<dynamic>())
+				.Where(j => j.Jogo.equipa1 != 0 && j.Jogo.equipa2 != 0)
+				.ToList();
+
+				if (!gruposValidos.Any()) continue;
+				var isPast = dia.Key < DateTime.Today;
+				var pt = new System.Globalization.CultureInfo("pt-PT");
+				var dataFormatada = dia.Key.ToString("dd", pt) + "/" + dia.Key.ToString("MMM", pt).Replace(".", "").ToUpper();
+				<div class="cal-day @(isPast ? "past hidden" : "")" data-date="@dia.Key.ToString("yyyy-MM-dd")">
 					<div class="cal-fixed-header" id="calendar-day">@dataFormatada</div>
 
 					@foreach (var horaGrupo in dia.GroupBy(j => j.HoraPrevista.Hour))
@@ -49,12 +57,18 @@
 				
 						@foreach (var faseGrupo in horaGrupo.GroupBy(j => j.Fase))
 						{
+							var jogosValidos = faseGrupo.Where(j => j.Jogo.equipa1 != 0 && j.Jogo.equipa2 != 0).ToList();
+							if (!jogosValidos.Any()) continue;
 							var horaTexto = horaGrupo.First().HoraPrevista.ToString("HH:mm");
 							<div class="cal-time-block" data-hour="@hora" data-day="@dia.Key.ToString("yyyy-MM-dd")">
 								<div class="cal-time-header">
 									<span class="cal-time">@horaTexto</span>
 									<span class="cal-livetag"><span class="live-dot"></span> AO VIVO</span>
 									<span class="cal-phase">@faseGrupo.Key</span>
+								</div>
+								<div class="cal-sticky-buttons">
+									<button id="show-past-games" class="cal-toggle-button">Ver jogos anteriores</button>
+									<button id="back-to-live" class="cal-toggle-button hidden">Voltar ao vivo</button>
 								</div>
 
 								@foreach (var jogoObj in faseGrupo.OrderBy(j => j.HoraPrevista))
@@ -65,27 +79,67 @@
 									}
 									var j = jogoObj.Jogo;
 									var jvm = Model.Jogos.FirstOrDefault(x => x.Id == j.Id.ToString());
-									var estado = jvm?.Estado?.ToLower() ?? "";
-									var scoreDisplay = jvm?.Estado == "Resultado Final" || j.começado == true ? $"{j.golos_equipa1} - {j.golos_equipa2}" : "VS";
-									var clockText = jvm?.Estado switch
-									{
-										"1ªP" or "2ªP" => GetClockDisplay(j.hora_inicio?.ToString(), now),
-										"Intervalo" => "INTERVALO",
-										"Resultado Final" => "RESULTADO FINAL",
-										_ when j.começado != true && jvm?.Estado != "Resultado Final" => jvm?.Estado,
-										_ => ""
-									};
+									var estadoRaw = jvm?.Estado?.Trim().ToLower() ?? "";
+									var horaPrevista = j.hora_prevista;
+									var horaInicio = j.hora_inicio ?? DateTime.MinValue;
+									var hora2Parte = j.hora_inicio_2parte ?? DateTime.MinValue;
+									var terminado = estadoRaw == "resultado final";
+									var intervalo = estadoRaw == "intervalo";
+									var primeiraParte = estadoRaw == "1ªp";
+									var segundaParte = estadoRaw == "2ªp";
+									var começou = j.começado;
 
-									var isFinished = jvm?.Estado == "Resultado Final";
-									var g1 = j.golos_equipa1;
-									var g2 = j.golos_equipa2;
-									var class1 = isFinished ? (g1 > g2 ? "winner" : g1 < g2 ? "loser" : "") : "";
-									var class2 = isFinished ? (g2 > g1 ? "winner" : g2 < g1 ? "loser" : "") : "";
+									var isAtrasado = !terminado && !intervalo && !primeiraParte && !segundaParte && horaPrevista < now && !começou;
+
+									var estadoDisplay = estadoRaw.ToUpper();
+									var clockText = "";
+
+									if (primeiraParte)
+									{
+										clockText = GetClockDisplay(j.hora_inicio?.ToString(), now);
+									}
+									else if (segundaParte)
+									{
+										clockText = GetClockDisplay(j.hora_inicio_2parte?.ToString(), now);
+									}
+									else if (intervalo)
+									{
+										clockText = "INTERVALO";
+									}
+									else if (terminado)
+									{
+										clockText = "RESULTADO FINAL";
+									}
+
+									if (isAtrasado)
+									{
+										estadoDisplay = $"EM ATRASO ({horaPrevista:HH:mm})";
+									}
+
+									// CSS class logic
+									var estadoClass = "";
+									if (terminado) estadoClass = "finished";
+									else if (intervalo || primeiraParte || segundaParte) estadoClass = "live";
+									else if (isAtrasado) estadoClass = "atrasado";
+
+									// score display
+									var showScore = terminado || começou;
+									var scoreDisplay = showScore ? $"{j.golos_equipa1} - {j.golos_equipa2}" : "VS";
+
+									// winner/loser
+									var class1 = terminado ? (j.golos_equipa1 > j.golos_equipa2 ? "winner" : j.golos_equipa1 < j.golos_equipa2 ? "loser" : "") : "";
+									var class2 = terminado ? (j.golos_equipa2 > j.golos_equipa1 ? "winner" : j.golos_equipa2 < j.golos_equipa1 ? "loser" : "") : "";
+
 
 									var marcadores1 = jvm?.MarcadoresEquipa1 ?? new List<string>();
 									var marcadores2 = jvm?.MarcadoresEquipa2 ?? new List<string>();
 
-									<div class="cal-game @estado" data-start="@j.hora_inicio" data-date="@jogoObj.HoraPrevista.ToString("yyyy-MM-dd")" data-hour="@hora" data-estado="@jvm?.Estado" onclick="@(j.começado == true ? "toggleScorers(this)" : "")">
+									<div class="cal-game @estadoClass"
+										 data-start="@j.hora_inicio"
+										 data-date="@jogoObj.HoraPrevista.ToString("yyyy-MM-dd")"
+										 data-hour="@hora"
+										 data-estado="@jvm?.Estado"
+										 onclick="@(começou ? "toggleScorers(this)" : "")">
 										<div class="cal-teams">
 											<div class="cal-team-block @class1">
 												<img src="/images/teams/@(Uri.EscapeDataString(jvm?.equipa1 ?? "") + " logo.png")" alt="@jvm?.equipa1" class="cal-team-logo" />
@@ -94,7 +148,7 @@
 
 											<div class="cal-display">
 												<div class="cal-game-info">
-													<span class="cal-game-status">@jvm?.Estado</span>
+													<span class="cal-game-status">@estadoDisplay</span>
 													<span class="cal-game-clock">@clockText</span>
 												</div>
 												<div class="cal-score">@scoreDisplay</div>
@@ -134,7 +188,6 @@
 					}
 				</div>
 			}
-
 		</div>
 
 
@@ -446,6 +499,9 @@
 		});
 
 		document.addEventListener('DOMContentLoaded', () => {
+			const isCalendario = document.getElementById('calendario');
+			if (!isCalendario) return;
+
 			const dayHeader = document.getElementById('calendar-day');
 			const timeHeader = document.querySelector('.cal-time-header');
 			const allDays = document.querySelectorAll('.cal-day');
@@ -459,14 +515,6 @@
 			const now = new Date();
 			let scrollTarget = null;
 			let closestDiff = Infinity;
-
-					if (scrollTarget) {
-			scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-			setTimeout(() => {
-				window.dispatchEvent(new Event('scroll')); // force update
-			}, 500);
-		}
 
 			allGames.forEach(game => {
 				const startTime = new Date(game.dataset.start);
@@ -483,102 +531,134 @@
 
 			if (scrollTarget) {
 				scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+				setTimeout(() => {
+					window.dispatchEvent(new Event('scroll')); // força atualização de headers
+				}, 500);
 			}
 
-			// === Sticky Header Updater ===
-		window.addEventListener('scroll', () => {
-			let found = false;
-			for (let i = 0; i < allDays.length; i++) {
-				const rect = allDays[i].getBoundingClientRect();
-				if (rect.top > 100) break; // passed current view
-				const newHeader = allDays[i].querySelector('.cal-fixed-header')?.textContent;
-				if (newHeader && newHeader !== currentDay) {
+			// === Sticky Headers ===
+			window.addEventListener('scroll', () => {
+				// Day header
+				let found = false;
+				for (let i = 0; i < allDays.length; i++) {
+					const rect = allDays[i].getBoundingClientRect();
+					if (rect.top > 100) break;
+					const newHeader = allDays[i].querySelector('.cal-fixed-header')?.textContent;
+					if (newHeader && newHeader !== currentDay) {
+						dayHeader.style.opacity = 0;
+						setTimeout(() => {
+							dayHeader.textContent = newHeader;
+							dayHeader.style.opacity = 1;
+						}, 150);
+						currentDay = newHeader;
+					}
+					found = true;
+				}
+				if (!found && currentDay) {
 					dayHeader.style.opacity = 0;
 					setTimeout(() => {
-						dayHeader.textContent = newHeader;
+						dayHeader.textContent = "";
 						dayHeader.style.opacity = 1;
 					}, 150);
-					currentDay = newHeader;
+					currentDay = "";
 				}
-				found = true;
-			}
-			// If scrolled above all days
-			if (!found && currentDay) {
-				dayHeader.style.opacity = 0;
-				setTimeout(() => {
-					dayHeader.textContent = "";
-					dayHeader.style.opacity = 1;
-				}, 150);
-				currentDay = "";
-			}
-		});
 
-				// Time Block Header
-				allBlocks.forEach(block => {
+				// Time block header
+				let foundBlock = false;
+				for (let i = 0; i < allBlocks.length; i++) {
+					const block = allBlocks[i];
 					const rect = block.getBoundingClientRect();
+
 					if (rect.top <= 140) {
 						const newHour = block.getAttribute('data-hour');
 						if (newHour && newHour !== currentTime) {
 							const local = block.querySelector('.cal-time')?.textContent || "";
 							const phase = block.querySelector('.cal-phase')?.textContent || "";
+							const tagContent = block.querySelector('.cal-livetag')?.cloneNode(true);
+							const targetTag = timeHeader.querySelector('.cal-livetag');
 
 							timeHeader.style.opacity = 0;
 							setTimeout(() => {
 								timeHeader.querySelector('.cal-time').textContent = local;
 								timeHeader.querySelector('.cal-phase').textContent = phase;
+
+								if (tagContent && targetTag) {
+									targetTag.innerHTML = tagContent.innerHTML;
+									targetTag.classList.toggle("visible", tagContent.classList.contains("visible"));
+							 }
+
 								timeHeader.style.opacity = 1;
 							}, 150);
+
 							currentTime = newHour;
 						}
+						foundBlock = true;
 					}
-				});
+				}
+
+				if (!foundBlock && currentTime !== "") {
+					currentTime = "";
+					timeHeader.querySelector('.cal-time').textContent = "";
+					timeHeader.querySelector('.cal-phase').textContent = "";
+					timeHeader.querySelector('.cal-livetag')?.classList.remove("visible");
+				}
 			});
+		});
 
 			// === Apply Estado Classes ===
-			function applyGameStateClasses() {
-				allGames.forEach(game => {
-					const estado = game.dataset.estado?.toLowerCase();
-					const clock = game.querySelector(".cal-game-clock");
+					const previousEstados = new Map();
 
-					if (!estado || !clock) return;
+		function applyGameStateClasses() {
+			allGames.forEach(game => {
+				const estado = game.dataset.estado?.trim().toLowerCase();
+				const clock = game.querySelector(".cal-game-clock");
+				const status = game.querySelector(".cal-game-status");
 
-							if (/^\d{2}:\d{2}$/.test(estado)) {
-			clock.classList.add("hidden");
-		} else {
-			clock.classList.remove("hidden");
+				if (!estado || !clock || !status) return;
+
+				// Skip if estado hasn't changed
+				if (previousEstados.get(game) === estado) return;
+
+				previousEstados.set(game, estado); // Update stored value
+
+				// Limpa classes antigas
+				game.classList.remove("live", "finished", "atrasado", "pen");
+				clock.classList.remove("live-blink", "interval-blink", "pen-blink");
+				status.classList.remove("interval-blink", "pen-blink");
+
+				// Aplica classes novas
+				if (estado === "1ªp" || estado === "2ªp") {
+					game.classList.add("live");
+					clock.classList.remove("hidden");
+					clock.classList.add("live-blink");
+				} else if (estado === "intervalo") {
+					game.classList.add("live");
+					clock.classList.add("hidden");
+					status.classList.add("interval-blink");
+				} else if (estado === "resultado final") {
+					game.classList.add("finished");
+					clock.classList.add("hidden");
+				} else if (estado.startsWith("em atraso")) {
+					game.classList.add("atrasado");
+					clock.classList.add("hidden");
+				} else {
+					clock.classList.add("hidden");
+				}
+			});
+
+			highlightLiveBlocks();
 		}
-					game.classList.remove("live", "finished", "atrasado", "pen");
-					clock.classList.remove("live-blink", "interval-blink", "pen-blink");
 
-					if (estado === "1ªp" || estado === "2ªp") {
-						game.classList.add("live");
-						clock.classList.add("live-blink");
-					} else if (estado === "intervalo") {
-						clock.classList.add("interval-blink");
-					} else if (estado === "pen") {
-						clock.classList.add("pen-blink");
-					} else if (estado === "resultado final") {
-						game.classList.add("finished");
-					} else if (estado.includes("em atraso")) {
-						game.classList.add("atrasado");
-					}
-				});
+				function highlightLiveBlocks() {
+			allBlocks.forEach(block => {
+				const liveGames = block.querySelectorAll(".cal-game.live");
+				const tag = block.querySelector(".cal-livetag");
 
-				highlightLiveBlocks();
-			}
-
-			function highlightLiveBlocks() {
-				allBlocks.forEach(block => {
-					const liveGames = block.querySelectorAll(".cal-game.live");
-					const tag = block.querySelector(".cal-livetag");
-					tag?.classList.toggle("visible", liveGames.length > 0);
-					if (liveGames.length > 0) {
-						block.classList.add("live-block");
-					} else {
-						block.classList.remove("live-block");
-					}
-				});
-			}
+				tag?.classList.toggle("visible", liveGames.length > 0);
+				block.classList.toggle("live-block", liveGames.length > 0);
+			});
+		}
 
 			// === Toggle Scorers ===
 			window.toggleScorers = function (el) {
@@ -594,6 +674,23 @@
 
 			applyGameStateClasses();
 			startLiveCheckLoop();
+		});
+
+		//buttons
+				document.getElementById("show-past-games")?.addEventListener("click", () => {
+			document.querySelectorAll(".cal-day.past").forEach(el => el.classList.remove("hidden"));
+			document.getElementById("back-to-live")?.classList.remove("hidden");
+			document.getElementById("show-past-games")?.classList.add("hidden");
+		});
+
+		document.getElementById("back-to-live")?.addEventListener("click", () => {
+			document.querySelectorAll(".cal-day.past").forEach(el => el.classList.add("hidden"));
+			document.getElementById("back-to-live")?.classList.add("hidden");
+			document.getElementById("show-past-games")?.classList.remove("hidden");
+
+			// opcional: scroll até próximo bloco ao vivo
+			const live = document.querySelector(".cal-game.live");
+			if (live) live.scrollIntoView({ behavior: "smooth", block: "start" });
 		});
 	</script>
 }
