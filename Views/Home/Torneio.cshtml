@@ -106,15 +106,18 @@
 									}
 									else if (intervalo)
 									{
-										clockText = "INTERVALO";
+										clockText = "";
+										estadoDisplay = "INTERVALO";
 									}
 									else if (terminado)
 									{
-										clockText = "RESULTADO FINAL";
+										clockText = "";
+										estadoDisplay = "RESULTADO FINAL";
 									}
 
 									if (isAtrasado)
 									{
+										clockText = "";
 										estadoDisplay = $"EM ATRASO ({horaPrevista:HH:mm})";
 									}
 
@@ -428,8 +431,10 @@
 
 @section Scripts {
 	<script>
-				// Tab toggle logic
-		document.addEventListener('DOMContentLoaded', () => {
+				// ==Selector Scripts===============
+
+		// Tab toggle logic
+		window.addEventListener('DOMContentLoaded', () => {
 			const buttons = document.querySelectorAll('.tab-button');
 			const contents = document.querySelectorAll('.tab-content');
 			const stickyBuffer = document.querySelector('.cal-sticky-buffer');
@@ -493,7 +498,8 @@
 			}
 		});
 
-		document.addEventListener('DOMContentLoaded', () => {
+		// == Calendar Scripts ==
+		window.addEventListener('DOMContentLoaded', () => {
 			const isCalendario = document.getElementById('calendario');
 			if (!isCalendario) return;
 
@@ -502,64 +508,58 @@
 			const allDays = document.querySelectorAll('.cal-day');
 			const allBlocks = document.querySelectorAll('.cal-time-block');
 			const allGames = document.querySelectorAll('.cal-game');
-			hidePastDays();
 
+			const showPastBtn = document.getElementById("show-past-games");
+			const backToLiveBtn = document.getElementById("back-to-live");
+
+			const now = new Date();
 			let currentDay = "";
 			let currentTime = "";
 
-					const showPastBtn = document.getElementById("show-past-games");
-		const backToLiveBtn = document.getElementById("back-to-live");
-
-		// Oculta todos os dias passados (sem jogos ao vivo ou futuros)
-		function hidePastDays() {
-			allDays.forEach(day => {
-				const games = day.querySelectorAll('.cal-game');
-				const anyFuture = Array.from(games).some(game => {
-					const estado = game.dataset.estado?.toLowerCase();
-					const start = new Date(game.dataset.start);
-					return (
-						estado === "1ªp" || estado === "2ªp" || estado === "intervalo" ||
-						(start >= now)
-					);
+			function hidePastDays() {
+				allDays.forEach(day => {
+					const games = day.querySelectorAll('.cal-game');
+					const anyFuture = Array.from(games).some(game => {
+						const estado = game.dataset.estado?.trim();
+						const start = new Date(game.dataset.start);
+						return (
+							estado === "1ªP" || estado === "2ªP" || estado === "Intervalo" || (start >= now)
+						);
+					});
+					if (!anyFuture) {
+						day.classList.add("hidden-day");
+					}
 				});
-				if (!anyFuture) {
-					day.classList.add("hidden-day");
-				}
-			});
-			showPastBtn.classList.remove("hidden");
-			backToLiveBtn.classList.add("hidden");
-		}
-
-		// Mostra todos os dias
-		function showAllDays() {
-			document.querySelectorAll(".cal-day.hidden-day").forEach(d => d.classList.remove("hidden-day"));
-			showPastBtn.classList.add("hidden");
-			backToLiveBtn.classList.remove("hidden");
-		}
-
-		// Voltar ao jogo ao vivo
-		function scrollBackToLive() {
-			const target = document.querySelector(".cal-game.live");
-			if (target) {
-				target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+				showPastBtn.classList.remove("hidden");
+				backToLiveBtn.classList.add("hidden");
 			}
-			showPastBtn.classList.remove("hidden");
-			backToLiveBtn.classList.add("hidden");
-			hidePastDays();
-		}
 
-		showPastBtn.addEventListener("click", showAllDays);
-		backToLiveBtn.addEventListener("click", scrollBackToLive);
+			function showAllDays() {
+				document.querySelectorAll(".cal-day.hidden-day").forEach(d => d.classList.remove("hidden-day"));
+				showPastBtn.classList.add("hidden");
+				backToLiveBtn.classList.remove("hidden");
+			}
 
-			// === Auto Scroll to Live or Closest ===
-			const now = new Date();
+			function scrollBackToLive() {
+				const target = document.querySelector(".cal-game.live");
+				if (target) {
+					target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+				}
+				showPastBtn.classList.remove("hidden");
+				backToLiveBtn.classList.add("hidden");
+				hidePastDays();
+			}
+
+			showPastBtn.addEventListener("click", showAllDays);
+			backToLiveBtn.addEventListener("click", scrollBackToLive);
+
+			// Auto Scroll to Live or Closest
 			let scrollTarget = null;
 			let closestDiff = Infinity;
 
 			allGames.forEach(game => {
 				const startTime = new Date(game.dataset.start);
 				const diffMin = (startTime - now) / 60000;
-
 				if (diffMin <= 0 && diffMin >= -50 && !scrollTarget) {
 					scrollTarget = game;
 				}
@@ -571,15 +571,11 @@
 
 			if (scrollTarget) {
 				scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-				setTimeout(() => {
-					window.dispatchEvent(new Event('scroll')); // força atualização de headers
-				}, 500);
+				setTimeout(() => window.dispatchEvent(new Event('scroll')), 500);
 			}
 
-			// === Sticky Headers ===
+			// Sticky Headers
 			window.addEventListener('scroll', () => {
-				// Day header
 				let found = false;
 				for (let i = 0; i < allDays.length; i++) {
 					const rect = allDays[i].getBoundingClientRect();
@@ -604,12 +600,10 @@
 					currentDay = "";
 				}
 
-				// Time block header
 				let foundBlock = false;
 				for (let i = 0; i < allBlocks.length; i++) {
 					const block = allBlocks[i];
 					const rect = block.getBoundingClientRect();
-
 					if (rect.top <= 140) {
 						const newHour = block.getAttribute('data-hour');
 						if (newHour && newHour !== currentTime) {
@@ -617,20 +611,16 @@
 							const phase = block.querySelector('.cal-phase')?.textContent || "";
 							const tagContent = block.querySelector('.cal-livetag')?.cloneNode(true);
 							const targetTag = timeHeader.querySelector('.cal-livetag');
-
 							timeHeader.style.opacity = 0;
 							setTimeout(() => {
 								timeHeader.querySelector('.cal-time').textContent = local;
 								timeHeader.querySelector('.cal-phase').textContent = phase;
-
 								if (tagContent && targetTag) {
 									targetTag.innerHTML = tagContent.innerHTML;
 									targetTag.classList.toggle("visible", tagContent.classList.contains("visible"));
-							 }
-
+								}
 								timeHeader.style.opacity = 1;
 							}, 150);
-
 							currentTime = newHour;
 						}
 						foundBlock = true;
@@ -644,68 +634,56 @@
 					timeHeader.querySelector('.cal-livetag')?.classList.remove("visible");
 				}
 			});
-		});
 
-			// === Apply Estado Classes ===
-					const previousEstados = new Map();
+			const previousEstados = new Map();
 
-		function applyGameStateClasses() {
-			allGames.forEach(game => {
-				const estado = game.dataset.estado?.trim().toLowerCase();
-				const clock = game.querySelector(".cal-game-clock");
-				const status = game.querySelector(".cal-game-status");
+			function applyGameStateClasses() {
+				allGames.forEach(game => {
+					const estado = game.dataset.estado?.trim();
+					const clock = game.querySelector(".cal-game-clock");
+					const status = game.querySelector(".cal-game-status");
+					if (!estado || !clock || !status) return;
+					if (previousEstados.get(game) === estado) return;
+					previousEstados.set(game, estado);
+					game.classList.remove("live", "finished", "atrasado", "pen");
+					clock.classList.remove("live-blink", "interval-blink", "pen-blink", "hidden");
+					status.classList.remove("interval-blink", "pen-blink");
+					if (estado === "1ªP" || estado === "2ªP") {
+						game.classList.add("live");
+						clock.classList.remove("hidden");
+						clock.classList.add("live-blink");
+					} else if (estado === "Intervalo") {
+						game.classList.add("live");
+						clock.classList.add("hidden");
+						status.classList.add("interval-blink");
+					} else if (estado === "Resultado Final") {
+						game.classList.add("finished");
+						clock.classList.add("hidden");
+					} else if (estado.startsWith("Em Atraso")) {
+						game.classList.add("atrasado");
+						clock.classList.add("hidden");
+					} else {
+						clock.classList.add("hidden");
+					}
+				});
+				highlightLiveBlocks();
+			}
 
-				if (!estado || !clock || !status) return;
+			window.applyGameStateClasses = applyGameStateClasses;
 
-				// Skip if estado hasn't changed
-				if (previousEstados.get(game) === estado) return;
+			function highlightLiveBlocks() {
+				allBlocks.forEach(block => {
+					const liveGames = block.querySelectorAll(".cal-game.live");
+					const tag = block.querySelector(".cal-livetag");
+					tag?.classList.toggle("visible", liveGames.length > 0);
+					block.classList.toggle("live-block", liveGames.length > 0);
+				});
+			}
 
-				previousEstados.set(game, estado); // Update stored value
-
-				// Limpa classes antigas
-				game.classList.remove("live", "finished", "atrasado", "pen");
-				clock.classList.remove("live-blink", "interval-blink", "pen-blink");
-				status.classList.remove("interval-blink", "pen-blink");
-
-				// Aplica classes novas
-				if (estado === "1ªp" || estado === "2ªp") {
-					game.classList.add("live");
-					clock.classList.remove("hidden");
-					clock.classList.add("live-blink");
-				} else if (estado === "intervalo") {
-					game.classList.add("live");
-					clock.classList.add("hidden");
-					status.classList.add("interval-blink");
-				} else if (estado === "resultado final") {
-					game.classList.add("finished");
-					clock.classList.add("hidden");
-				} else if (estado.startsWith("em atraso")) {
-					game.classList.add("atrasado");
-					clock.classList.add("hidden");
-				} else {
-					clock.classList.add("hidden");
-				}
-			});
-
-			highlightLiveBlocks();
-		}
-
-				function highlightLiveBlocks() {
-			allBlocks.forEach(block => {
-				const liveGames = block.querySelectorAll(".cal-game.live");
-				const tag = block.querySelector(".cal-livetag");
-
-				tag?.classList.toggle("visible", liveGames.length > 0);
-				block.classList.toggle("live-block", liveGames.length > 0);
-			});
-		}
-
-			// === Toggle Scorers ===
 			window.toggleScorers = function (el) {
 				el.classList.toggle("expanded");
 			};
 
-			// === Start Interval Updates ==
 			function startLiveCheckLoop() {
 				setInterval(() => {
 					applyGameStateClasses();
@@ -716,17 +694,6 @@
 			startLiveCheckLoop();
 		});
 
-		//buttons
-					const toggleBtn = document.getElementById('ver-anteriores');
-		window.addEventListener('scroll', () => {
-		  const userScrolled = window.scrollY > 300;
-		  const hasHidden = document.querySelector('.cal-day.hidden, .cal-time-block.hidden');
-		  toggleBtn.classList.toggle('visible', userScrolled && hasHidden);
-		});
-			// opcional: scroll até próximo bloco ao vivo
-			const live = document.querySelector(".cal-game.live");
-			if (live) live.scrollIntoView({ behavior: "smooth", block: "start" });
-		});
 	</script>
 }
 

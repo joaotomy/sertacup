@@ -65,13 +65,8 @@
 }
 
 /* === Cal Section =================================== */
-.cal-sticky-buffer .active {
-    display: block;
-}
-
 .cal-sticky-buffer {
-    display: none;
-    position: sticky; 
+    position: fixed; 
     top: 0;
     left: 0;
     width: 100vw; /* force full viewport width */
