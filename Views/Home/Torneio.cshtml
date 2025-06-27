@@ -69,11 +69,13 @@
 
 								@foreach (var jogoObj in faseGrupo.OrderBy(j => j.HoraPrevista))
 								{
-									var j = jogoObj.Jogo;
+
 									if (string.IsNullOrWhiteSpace(j.equipa1) || string.IsNullOrWhiteSpace(j.equipa2))
 									{
 										continue;
 									}
+									var j = jogoObj.Jogo;
+									
 									var estadoRaw = j.Estado?.Trim().ToLower() ?? "";
 									var horaPrevista = j.horaPrevista;
 									var horaInicio = DateTime.TryParse(j.hora_inicio, out var hIni) ? hIni : DateTime.MinValue;
