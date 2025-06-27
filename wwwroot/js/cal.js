@@ -1,5 +1,7 @@
-﻿const isCalendario = document.getElementById('calendario');
+﻿document.addEventListener("DOMContentLoaded", () => {
+    const isCalendario = document.getElementById("calendario");
     if (!isCalendario) return;
+
 
     const dayHeader = document.getElementById('calendar-day');
     const timeHeader = document.querySelector('.cal-time-header');
@@ -202,4 +204,4 @@
         }
     });
 
-
+});

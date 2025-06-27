@@ -328,10 +328,6 @@
 
 
 /* Game state classes */
-.cal-game.live .cal-game-status {
-    font-size: 0.1rem;
-}
-
 .cal-game .cal-game-clock.live-blink {
     color: var(--live-red);
     font-size: var(--font-size-h7);
