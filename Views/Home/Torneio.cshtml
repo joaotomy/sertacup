@@ -17,6 +17,7 @@
 	</div>
 	<div class="cal-sticky-buffer"></div>
 	<div class="col-span-12 md:col-span-8 sm:col-span-4 content-section">
+
 		<div id="calendario" class="tab-content active">
 			@{
 				var now = DateTime.Now;
@@ -25,8 +26,8 @@
 				{
 					Jogo = j,
 					Data = DateTime.TryParse(j.hora_inicio, out var parsedInicio) ? parsedInicio : DateTime.MinValue,
-					HoraPrevista = DateTime.TryParse(j.Hora, out var parsedPrevista) ? parsedPrevista : DateTime.MinValue,
-					Hora = DateTime.TryParse(j.Hora, out var parsedHora) ? parsedHora.Hour : 0,
+					HoraPrevista = j.horaPrevista,
+					Hora = j.horaPrevista.Hour,
 					Fase = j.Fase ?? (j.grupo == "0" ? "FASE FINAL" : "FASE DE GRUPOS")
 				})
 				.OrderBy(j => j.HoraPrevista.Date)
@@ -45,11 +46,10 @@
 				.ToList();
 
 				if (!gruposValidos.Any()) continue;
-				var isPast = dia.Key < DateTime.Today;
 				var pt = new System.Globalization.CultureInfo("pt-PT");
 				var dataFormatada = dia.Key.ToString("dd", pt) + "/" + dia.Key.ToString("MMM", pt).Replace(".", "").ToUpper();
-				<div class="cal-day @(isPast ? "past hidden" : "")" data-date="@dia.Key.ToString("yyyy-MM-dd")">
-					<div class="cal-fixed-header" id="calendar-day">@dataFormatada</div>
+				<div class="cal-day" data-date="@dia.Key.ToString("yyyy-MM-dd")">
+					<div class="cal-fixed-header">@dataFormatada</div>
 
 					@foreach (var horaGrupo in dia.GroupBy(j => j.HoraPrevista.Hour))
 					{
@@ -75,7 +75,7 @@
 										continue;
 									}
 									var estadoRaw = j.Estado?.Trim().ToLower() ?? "";
-									var horaPrevista = DateTime.TryParse(j.Hora, out var hPrev) ? hPrev : DateTime.MinValue;
+									var horaPrevista = j.horaPrevista;
 									var horaInicio = DateTime.TryParse(j.hora_inicio, out var hIni) ? hIni : DateTime.MinValue;
 									var hora2Parte = DateTime.TryParse(j.hora_inicio_2parte, out var h2) ? h2 : DateTime.MinValue;
 									var terminado = estadoRaw == "resultado final";
@@ -192,234 +192,235 @@
 					}
 				</div>
 			}
-			<div id="grupos" class="tab-content">
-				<div class="grid-container group-section">
-					@foreach (var group in Model.Grupos.OrderBy(g => g.Name))
-					{
-						<div class="col-span-6 md:col-span-4 sm:col-span-4 group-block">
-							<table class="group-table">
-								<colgroup>
-									<col class="col-position" />
-									<col class="col-team" />
-									<col class="col-stat" />
-									<col class="col-stat" />
-									<col class="col-stat" />
-									<col class="col-stat" />
-									<col class="col-stat" />
-									<col class="col-stat" />
-								</colgroup>
-								<thead>
-									<tr>
-										<th colspan="2" class="group-title">Grupo @group.Name</th>
-										<th class="group-stat-head">J</th>
-										<th class="group-stat-head">V</th>
-										<th class="group-stat-head">E</th>
-										<th class="group-stat-head">D</th>
-										<th class="group-stat-head">DG</th>
-										<th class="group-stat-head">P</th>
-									</tr>
-								</thead>
-								<tbody>
-									@foreach (var team in group.Teams
-																	.OrderByDescending(t => t.P)
-																	.ThenByDescending(t => t.GD)
-																	.ThenByDescending(t => t.GM)
-																	.Select((t, i) => new { Team = t, Position = i + 1 }))
-									{
-										<tr>
-											<td class="group-team-position place-@team.Position">@team.Position<sup>º</sup></td>
-											<td class="group-team-cell">
-												<img src="/images/teams/@(Uri.EscapeDataString(team.Team.Name) + " logo.png")" alt="@team.Team.Name" class="group-team-logo" />
-												<span class="group-team-name">@team.Team.Name</span>
-											</td>
-											<td class="group-team-stat">@team.Team.J</td>
-											<td class="group-team-stat">@team.Team.V</td>
-											<td class="group-team-stat">@team.Team.E</td>
-											<td class="group-team-stat">@team.Team.D</td>
-											<td class="group-team-stat">@team.Team.GD</td>
-											<td class="group-team-points">@team.Team.P</td>
-										</tr>
-									}
-								</tbody>
-							</table>
-						</div>
-					}
-				</div>
-			</div>
 
 
-			<div id="fases-finais" class="tab-content">
-				<div class="ff-section-title">Todas as Ligas</div>
+		</div>
 
-				@{
-					var isMobile = Context.Request.Query["mobile"].ToString().ToLower() == "true";
-
-					// Total teams per league
-					var teamCounts = new Dictionary<string, int>
-								{
-								{ "champs", 32 },
-								{ "europa", 16 },
-								{ "conference", 16 },
-								{ "feminina", 4 }
-								};
-
-					// Helper function to compute placement range
-					string GetPlacementRange(int totalPlacements, int boxCount, int boxIndex)
-					{
-						int rangeSize = totalPlacements / boxCount;
-						int start = boxIndex * rangeSize + 1;
-						int end = (boxIndex + 1) * rangeSize;
-						return $"{start}º–{end}º LUGAR";
-					}
-
-					var leagueRounds = new Dictionary<string, dynamic[]>
-					{
-						["champs"] = isMobile ? new[] {
-								new { Title = "1ª Ronda", Side = "center", BoxCount = 1, GamesPerBox = 8, Jogos = new[] { "59", "60", "61", "62", "63", "64", "57", "58" }, GapLevel = 0 },
-								new { Title = "2ª Ronda", Side = "center", BoxCount = 2, GamesPerBox = 4, Jogos = new[] { "73", "74", "75", "76", "77", "78", "79", "80" }, GapLevel = 1 },
-								new { Title = "3ª Ronda", Side = "center", BoxCount = 4, GamesPerBox = 2, Jogos = new[] { "89", "90", "91", "92", "93", "94", "95", "96" }, GapLevel = 2 },
-								new { Title = "Finais", Side = "center", BoxCount = 8, GamesPerBox = 1, Jogos = new[] { "97", "98", "99", "100", "101", "102", "103", "104" }, GapLevel = 3 }
-								} : new[] {
-								new { Title = "1ª Ronda", Side = "left", BoxCount = 1, GamesPerBox = 4, Jogos = new[] { "59", "60", "61", "62" }, GapLevel = 0 },
-								new { Title = "2ª Ronda", Side = "left", BoxCount = 2, GamesPerBox = 2, Jogos = new[] { "73", "74", "75", "76" }, GapLevel = 1 },
-								new { Title = "3ª Ronda", Side = "left", BoxCount = 4, GamesPerBox = 1, Jogos = new[] { "89", "90", "91", "92" }, GapLevel = 2 },
-								new { Title = "Finais", Side = "center", BoxCount = 8, GamesPerBox = 1, Jogos = new[] { "97", "98", "99", "100", "101", "102", "103", "104" }, GapLevel = 3 },
-								new { Title = "3ª Ronda", Side = "right", BoxCount = 4, GamesPerBox = 1, Jogos = new[] { "93", "94", "95", "96" }, GapLevel = 2 },
-								new { Title = "2ª Ronda", Side = "right", BoxCount = 2, GamesPerBox = 2, Jogos = new[] { "77", "78", "79", "80" }, GapLevel = 1 },
-								new { Title = "1ª Ronda", Side = "right", BoxCount = 1, GamesPerBox = 4, Jogos = new[] { "63", "64", "57", "58" }, GapLevel = 0 }
-								},
-						["europa"] = isMobile ? new[] {
-								new { Title = "1ª Ronda", Side = "center", BoxCount = 1, GamesPerBox = 4, Jogos = new[] { "49", "50", "51", "52" }, GapLevel = 0 },
-								new { Title = "2ª Ronda", Side = "center", BoxCount = 2, GamesPerBox = 2, Jogos = new[] { "69", "70", "71", "72" }, GapLevel = 1 },
-								new { Title = "Finais", Side = "center", BoxCount = 4, GamesPerBox = 1, Jogos = new[] { "81", "82", "83", "88" }, GapLevel = 3 }
-								} : new[] {
-								new { Title = "1ª Ronda", Side = "left", BoxCount = 1, GamesPerBox = 2, Jogos = new[] { "49", "50" }, GapLevel = 0 },
-								new { Title = "2ª Ronda", Side = "left", BoxCount = 1, GamesPerBox = 2, Jogos = new[] { "69", "70" }, GapLevel = 1 },
-								new { Title = "Finais", Side = "center", BoxCount = 4, GamesPerBox = 1, Jogos = new[] { "81", "82", "83", "88" }, GapLevel = 3 },
-								new { Title = "2ª Ronda", Side = "right", BoxCount = 1, GamesPerBox = 2, Jogos = new[] { "71", "72" }, GapLevel = 1 },
-								new { Title = "1ª Ronda", Side = "right", BoxCount = 1, GamesPerBox = 2, Jogos = new[] { "51", "52" }, GapLevel = 0 }
-								},
-						["conference"] = isMobile ? new[] {
-								new { Title = "1ª Ronda", Side = "center", BoxCount = 1, GamesPerBox = 4, Jogos = new[] { "53", "54", "55", "56" }, GapLevel = 0 },
-								new { Title = "2ª Ronda", Side = "center", BoxCount = 2, GamesPerBox = 2, Jogos = new[] { "65", "66", "67", "68" }, GapLevel = 1 },
-								new { Title = "Finais", Side = "center", BoxCount = 4, GamesPerBox = 1, Jogos = new[] { "84", "85", "86", "87" }, GapLevel = 3 }
-								} : new[] {
-								new { Title = "1ª Ronda", Side = "left", BoxCount = 1, GamesPerBox = 2, Jogos = new[] { "53", "54" }, GapLevel = 0 },
-								new { Title = "2ª Ronda", Side = "left", BoxCount = 1, GamesPerBox = 2, Jogos = new[] { "65", "66" }, GapLevel = 1 },
-								new { Title = "Finais", Side = "center", BoxCount = 4, GamesPerBox = 1, Jogos = new[] { "84", "85", "86", "87" }, GapLevel = 3 },
-								new { Title = "2ª Ronda", Side = "right", BoxCount = 1, GamesPerBox = 2, Jogos = new[] { "67", "68" }, GapLevel = 1 },
-								new { Title = "1ª Ronda", Side = "right", BoxCount = 1, GamesPerBox = 2, Jogos = new[] { "55", "56" }, GapLevel = 0 }
-								},
-						["feminina"] = isMobile ? new[] {
-								new { Title = "Meias Finais", Side = "center", BoxCount = 2, GamesPerBox = 1, Jogos = new[] { "105", "106" }, GapLevel = 1 },
-								new { Title = "Finais", Side = "center", BoxCount = 2, GamesPerBox = 1, Jogos = new[] { "108", "107" }, GapLevel = 3 }
-								} : new[] {
-								new { Title = "Meias Finais", Side = "left", BoxCount = 1, GamesPerBox = 1, Jogos = new[] { "105" }, GapLevel = 1 },
-								new { Title = "Finais", Side = "center", BoxCount = 2, GamesPerBox = 1, Jogos = new[] { "108", "107" }, GapLevel = 3 },
-								new { Title = "Meias Finais", Side = "right", BoxCount = 1, GamesPerBox = 1, Jogos = new[] { "106" }, GapLevel = 1 }
-								}
-					};
-
-
-					var allLeagues = new[] {
-								new { Key = "champs", Name = "Liga dos Campeões" },
-								new { Key = "europa", Name = "Liga Europa" },
-								new { Key = "conference", Name = "Liga Conferência" },
-								new { Key = "feminina", Name = "Liga Feminina" }
-								};
-
-				}
-
-
-
-				@foreach (var league in allLeagues)
+		<div id="grupos" class="tab-content">
+			<div class="grid-container group-section">
+				@foreach (var group in Model.Grupos.OrderBy(g => g.Name))
 				{
-					<div class="ff-league-section">
-						<div class="ff-league-title">@league.Name</div>
-						<div class="ff-league-scroll-wrapper">
-							<div class="ff-league-scroll">
-								@for (int r = 0; r < leagueRounds[league.Key].Length; r++)
+					<div class="col-span-6 md:col-span-4 sm:col-span-4 group-block">
+						<table class="group-table">
+							<colgroup>
+								<col class="col-position" />
+								<col class="col-team" />
+								<col class="col-stat" />
+								<col class="col-stat" />
+								<col class="col-stat" />
+								<col class="col-stat" />
+								<col class="col-stat" />
+								<col class="col-stat" />
+							</colgroup>
+							<thead>
+								<tr>
+									<th colspan="2" class="group-title">Grupo @group.Name</th>
+									<th class="group-stat-head">J</th>
+									<th class="group-stat-head">V</th>
+									<th class="group-stat-head">E</th>
+									<th class="group-stat-head">D</th>
+									<th class="group-stat-head">DG</th>
+									<th class="group-stat-head">P</th>
+								</tr>
+							</thead>
+							<tbody>
+								@foreach (var team in group.Teams
+															.OrderByDescending(t => t.P)
+															.ThenByDescending(t => t.GD)
+															.ThenByDescending(t => t.GM)
+															.Select((t, i) => new { Team = t, Position = i + 1 }))
 								{
-									var round = leagueRounds[league.Key][r];
-									var gapClass = $"gap-level-{round.GapLevel}";
-									<div class="ff-round-wrapper @gapClass">
-										@if (!isMobile && round.Side == "right")
-										{
-											<div class="ff-vertical-separator"></div>
-										}
-										<div class="ff-round-column">
-											<div class="ff-round-title @(round.Title == "Finais" ? "ff-final-round" : "")">@round.Title</div>
-											<div class="ff-game-stack">
-												@for (int i = 0; i < round.BoxCount; i++)
-												{
-													<div class="ff-game-box">
-														<div class="ff-placement-range">@GetPlacementRange(teamCounts[league.Key], round.BoxCount, i)</div>
-														@for (int j = 0; j < round.GamesPerBox; j++)
-														{
-															var index = i * round.GamesPerBox + j;
-															if (index < round.Jogos.Length)
-															{
-																var jogo = Model.Jogos.FirstOrDefault(o => o.Id == round.Jogos[index]);
-																if (jogo != null)
-																{
-																	var isFinished = jogo.Estado == "Resultado Final";
-																	var isOngoing = jogo.Estado == "A Decorrer";
-																	int.TryParse(jogo.golos_equipa1, out var g1);
-																	int.TryParse(jogo.golos_equipa2, out var g2);
-																	var class1 = isFinished ? (g1 > g2 ? "ff-winner" : g1 < g2 ? "ff-loser" : "") : "";
-																	var class2 = isFinished ? (g2 > g1 ? "ff-winner" : g2 < g1 ? "ff-loser" : "") : "";
-
-																	<div class="ff-game">
-																		<div class="ff-game-status">
-																			@if (isOngoing)
-																			{
-																				<div class="ff-game-live"><span class="ff-live-dot"></span> AO VIVO</div>
-																			}
-																			else
-																			{
-																				<div class="ff-game-caption">@jogo.Hora</div>
-																			}
-																		</div>
-																		<div class="ff-game-box-inner">
-																			<div class="ff-team-block @class1">
-																				<img src="/images/teams/@(Uri.EscapeDataString(jogo.equipa1 ?? "") + " logo.png")" alt="@jogo.equipa1" class="ff-team-logo" />
-																				<span class="ff-team-name"><span>@jogo.equipa1</span></span>
-																				<div class="ff-separator"></div>
-																				<span class="ff-team-score">@g1</span>
-																			</div>
-																			<div class="ff-team-block @class2">
-																				<img src="/images/teams/@(Uri.EscapeDataString(jogo.equipa2 ?? "") + " logo.png")" alt="@jogo.equipa2" class="ff-team-logo" />
-																				<span class="ff-team-name"><span>@jogo.equipa2</span></span>
-																				<div class="ff-separator"></div>
-																				<span class="ff-team-score">@g2</span>
-																			</div>
-																		</div>
-
-																	</div>
-																}
-															}
-														}
-													</div>
-													@if (i < round.BoxCount - 1)
-													{
-														<div class="ff-horizontal-separator"></div>
-													}
-												}
-											</div>
-										</div>
-										@if (!isMobile && round.Side == "left")
-										{
-											<div class="ff-vertical-separator"></div>
-										}
-									</div>
+									<tr>
+										<td class="group-team-position place-@team.Position">@team.Position<sup>º</sup></td>
+										<td class="group-team-cell">
+											<img src="/images/teams/@(Uri.EscapeDataString(team.Team.Name) + " logo.png")" alt="@team.Team.Name" class="group-team-logo" />
+											<span class="group-team-name">@team.Team.Name</span>
+										</td>
+										<td class="group-team-stat">@team.Team.J</td>
+										<td class="group-team-stat">@team.Team.V</td>
+										<td class="group-team-stat">@team.Team.E</td>
+										<td class="group-team-stat">@team.Team.D</td>
+										<td class="group-team-stat">@team.Team.GD</td>
+										<td class="group-team-points">@team.Team.P</td>
+									</tr>
 								}
-							</div>
-						</div>
+							</tbody>
+						</table>
 					</div>
 				}
-
-
 			</div>
+		</div>
+
+
+		<div id="fases-finais" class="tab-content">
+			<div class="ff-section-title">Todas as Ligas</div>
+
+			@{
+				var isMobile = Context.Request.Query["mobile"].ToString().ToLower() == "true";
+
+				// Total teams per league
+				var teamCounts = new Dictionary<string, int>
+						{
+						{ "champs", 32 },
+						{ "europa", 16 },
+						{ "conference", 16 },
+						{ "feminina", 4 }
+						};
+
+				// Helper function to compute placement range
+				string GetPlacementRange(int totalPlacements, int boxCount, int boxIndex)
+				{
+					int rangeSize = totalPlacements / boxCount;
+					int start = boxIndex * rangeSize + 1;
+					int end = (boxIndex + 1) * rangeSize;
+					return $"{start}º–{end}º LUGAR";
+				}
+
+				var leagueRounds = new Dictionary<string, dynamic[]>
+				{
+					["champs"] = isMobile ? new[] {
+						new { Title = "1ª Ronda", Side = "center", BoxCount = 1, GamesPerBox = 8, Jogos = new[] { "59", "60", "61", "62", "63", "64", "57", "58" }, GapLevel = 0 },
+						new { Title = "2ª Ronda", Side = "center", BoxCount = 2, GamesPerBox = 4, Jogos = new[] { "73", "74", "75", "76", "77", "78", "79", "80" }, GapLevel = 1 },
+						new { Title = "3ª Ronda", Side = "center", BoxCount = 4, GamesPerBox = 2, Jogos = new[] { "89", "90", "91", "92", "93", "94", "95", "96" }, GapLevel = 2 },
+						new { Title = "Finais", Side = "center", BoxCount = 8, GamesPerBox = 1, Jogos = new[] { "97", "98", "99", "100", "101", "102", "103", "104" }, GapLevel = 3 }
+						} : new[] {
+						new { Title = "1ª Ronda", Side = "left", BoxCount = 1, GamesPerBox = 4, Jogos = new[] { "59", "60", "61", "62" }, GapLevel = 0 },
+						new { Title = "2ª Ronda", Side = "left", BoxCount = 2, GamesPerBox = 2, Jogos = new[] { "73", "74", "75", "76" }, GapLevel = 1 },
+						new { Title = "3ª Ronda", Side = "left", BoxCount = 4, GamesPerBox = 1, Jogos = new[] { "89", "90", "91", "92" }, GapLevel = 2 },
+						new { Title = "Finais", Side = "center", BoxCount = 8, GamesPerBox = 1, Jogos = new[] { "97", "98", "99", "100", "101", "102", "103", "104" }, GapLevel = 3 },
+						new { Title = "3ª Ronda", Side = "right", BoxCount = 4, GamesPerBox = 1, Jogos = new[] { "93", "94", "95", "96" }, GapLevel = 2 },
+						new { Title = "2ª Ronda", Side = "right", BoxCount = 2, GamesPerBox = 2, Jogos = new[] { "77", "78", "79", "80" }, GapLevel = 1 },
+						new { Title = "1ª Ronda", Side = "right", BoxCount = 1, GamesPerBox = 4, Jogos = new[] { "63", "64", "57", "58" }, GapLevel = 0 }
+						},
+					["europa"] = isMobile ? new[] {
+						new { Title = "1ª Ronda", Side = "center", BoxCount = 1, GamesPerBox = 4, Jogos = new[] { "49", "50", "51", "52" }, GapLevel = 0 },
+						new { Title = "2ª Ronda", Side = "center", BoxCount = 2, GamesPerBox = 2, Jogos = new[] { "69", "70", "71", "72" }, GapLevel = 1 },
+						new { Title = "Finais", Side = "center", BoxCount = 4, GamesPerBox = 1, Jogos = new[] { "81", "82", "83", "88" }, GapLevel = 3 }
+						} : new[] {
+						new { Title = "1ª Ronda", Side = "left", BoxCount = 1, GamesPerBox = 2, Jogos = new[] { "49", "50" }, GapLevel = 0 },
+						new { Title = "2ª Ronda", Side = "left", BoxCount = 1, GamesPerBox = 2, Jogos = new[] { "69", "70" }, GapLevel = 1 },
+						new { Title = "Finais", Side = "center", BoxCount = 4, GamesPerBox = 1, Jogos = new[] { "81", "82", "83", "88" }, GapLevel = 3 },
+						new { Title = "2ª Ronda", Side = "right", BoxCount = 1, GamesPerBox = 2, Jogos = new[] { "71", "72" }, GapLevel = 1 },
+						new { Title = "1ª Ronda", Side = "right", BoxCount = 1, GamesPerBox = 2, Jogos = new[] { "51", "52" }, GapLevel = 0 }
+						},
+					["conference"] = isMobile ? new[] {
+						new { Title = "1ª Ronda", Side = "center", BoxCount = 1, GamesPerBox = 4, Jogos = new[] { "53", "54", "55", "56" }, GapLevel = 0 },
+						new { Title = "2ª Ronda", Side = "center", BoxCount = 2, GamesPerBox = 2, Jogos = new[] { "65", "66", "67", "68" }, GapLevel = 1 },
+						new { Title = "Finais", Side = "center", BoxCount = 4, GamesPerBox = 1, Jogos = new[] { "84", "85", "86", "87" }, GapLevel = 3 }
+						} : new[] {
+						new { Title = "1ª Ronda", Side = "left", BoxCount = 1, GamesPerBox = 2, Jogos = new[] { "53", "54" }, GapLevel = 0 },
+						new { Title = "2ª Ronda", Side = "left", BoxCount = 1, GamesPerBox = 2, Jogos = new[] { "65", "66" }, GapLevel = 1 },
+						new { Title = "Finais", Side = "center", BoxCount = 4, GamesPerBox = 1, Jogos = new[] { "84", "85", "86", "87" }, GapLevel = 3 },
+						new { Title = "2ª Ronda", Side = "right", BoxCount = 1, GamesPerBox = 2, Jogos = new[] { "67", "68" }, GapLevel = 1 },
+						new { Title = "1ª Ronda", Side = "right", BoxCount = 1, GamesPerBox = 2, Jogos = new[] { "55", "56" }, GapLevel = 0 }
+						},
+					["feminina"] = isMobile ? new[] {
+						new { Title = "Meias Finais", Side = "center", BoxCount = 2, GamesPerBox = 1, Jogos = new[] { "105", "106" }, GapLevel = 1 },
+						new { Title = "Finais", Side = "center", BoxCount = 2, GamesPerBox = 1, Jogos = new[] { "108", "107" }, GapLevel = 3 }
+						} : new[] {
+						new { Title = "Meias Finais", Side = "left", BoxCount = 1, GamesPerBox = 1, Jogos = new[] { "105" }, GapLevel = 1 },
+						new { Title = "Finais", Side = "center", BoxCount = 2, GamesPerBox = 1, Jogos = new[] { "108", "107" }, GapLevel = 3 },
+						new { Title = "Meias Finais", Side = "right", BoxCount = 1, GamesPerBox = 1, Jogos = new[] { "106" }, GapLevel = 1 }
+						}
+				};
+
+
+				var allLeagues = new[] {
+						new { Key = "champs", Name = "Liga dos Campeões" },
+						new { Key = "europa", Name = "Liga Europa" },
+						new { Key = "conference", Name = "Liga Conferência" },
+						new { Key = "feminina", Name = "Liga Feminina" }
+						};
+
+			}
+
+
+
+			@foreach (var league in allLeagues)
+			{
+				<div class="ff-league-section">
+					<div class="ff-league-title">@league.Name</div>
+					<div class="ff-league-scroll-wrapper">
+						<div class="ff-league-scroll">
+							@for (int r = 0; r < leagueRounds[league.Key].Length; r++)
+							{
+								var round = leagueRounds[league.Key][r];
+								var gapClass = $"gap-level-{round.GapLevel}";
+								<div class="ff-round-wrapper @gapClass">
+									@if (!isMobile && round.Side == "right")
+									{
+										<div class="ff-vertical-separator"></div>
+									}
+									<div class="ff-round-column">
+										<div class="ff-round-title @(round.Title == "Finais" ? "ff-final-round" : "")">@round.Title</div>
+										<div class="ff-game-stack">
+											@for (int i = 0; i < round.BoxCount; i++)
+											{
+												<div class="ff-game-box">
+													<div class="ff-placement-range">@GetPlacementRange(teamCounts[league.Key], round.BoxCount, i)</div>
+													@for (int j = 0; j < round.GamesPerBox; j++)
+													{
+														var index = i * round.GamesPerBox + j;
+														if (index < round.Jogos.Length)
+														{
+															var jogo = Model.Jogos.FirstOrDefault(o => o.Id == round.Jogos[index]);
+															if (jogo != null)
+															{
+																var isFinished = jogo.Estado == "Resultado Final";
+																var isOngoing = jogo.Estado == "A Decorrer";
+																int.TryParse(jogo.golos_equipa1, out var g1);
+																int.TryParse(jogo.golos_equipa2, out var g2);
+																var class1 = isFinished ? (g1 > g2 ? "ff-winner" : g1 < g2 ? "ff-loser" : "") : "";
+																var class2 = isFinished ? (g2 > g1 ? "ff-winner" : g2 < g1 ? "ff-loser" : "") : "";
+
+																<div class="ff-game">
+																	<div class="ff-game-status">
+																		@if (isOngoing)
+																		{
+																			<div class="ff-game-live"><span class="ff-live-dot"></span> AO VIVO</div>
+																		}
+																		else
+																		{
+																			<div class="ff-game-caption">@jogo.Hora</div>
+																		}
+																	</div>
+																	<div class="ff-game-box-inner">
+																		<div class="ff-team-block @class1">
+																			<img src="/images/teams/@(Uri.EscapeDataString(jogo.equipa1 ?? "") + " logo.png")" alt="@jogo.equipa1" class="ff-team-logo" />
+																			<span class="ff-team-name"><span>@jogo.equipa1</span></span>
+																			<div class="ff-separator"></div>
+																			<span class="ff-team-score">@g1</span>
+																		</div>
+																		<div class="ff-team-block @class2">
+																			<img src="/images/teams/@(Uri.EscapeDataString(jogo.equipa2 ?? "") + " logo.png")" alt="@jogo.equipa2" class="ff-team-logo" />
+																			<span class="ff-team-name"><span>@jogo.equipa2</span></span>
+																			<div class="ff-separator"></div>
+																			<span class="ff-team-score">@g2</span>
+																		</div>
+																	</div>
+
+																</div>
+															}
+														}
+													}
+												</div>
+												@if (i < round.BoxCount - 1)
+												{
+													<div class="ff-horizontal-separator"></div>
+												}
+											}
+										</div>
+									</div>
+									@if (!isMobile && round.Side == "left")
+									{
+										<div class="ff-vertical-separator"></div>
+									}
+								</div>
+							}
+						</div>
+					</div>
+				</div>
+			}
 
 		</div>
 
