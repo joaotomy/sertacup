@@ -71,7 +71,7 @@
 
 .cal-sticky-buffer {
     display: none;
-    position: fixed; /* changed from sticky */
+    position: sticky; 
     top: 0;
     left: 0;
     width: 100vw; /* force full viewport width */
@@ -146,24 +146,31 @@
     border-radius: 0 0 12px 12px;
 }
 
-.cal-toggle-button {
-    background-color: rgba(0, 0, 0, 0.6);
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 0.6rem 1.2rem;
-    font-family: var(--font-display);
-    font-size: 0.9rem;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.2s ease;
+.cal-sticky-buttons {
+    position: fixed;
+    top: 220px; /* ou logo abaixo do header */
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9;
+    pointer-events: none; /* evita bloquear o scroll por baixo */
 }
 
-    .cal-toggle-button:hover {
-        background-color: rgba(255, 0, 0, 0.8);
-    }
+.cal-toggle-button {
+    pointer-events: auto; /* só o botão pode interagir */
+    backdrop-filter: blur(6px);
+    background: rgba(255, 255, 255, 0.8);
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-family: var(--font-display);
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: none; /* hidden by default */
+}
 
-    .cal-toggle-button.hidden {
-        display: none;
+
+
+    .cal-toggle-button.visible {
+        display: block;
     }
 
 .cal-time-block {

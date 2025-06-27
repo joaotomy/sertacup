@@ -17,6 +17,11 @@
 	<div class="cal-sticky-buffer"></div>
 	<div class="col-span-12 md:col-span-8 sm:col-span-4 content-section">
 		<div id="calendario" class="tab-content active">
+
+			<div class="cal-sticky-buttons">
+				<button id="show-past-games" class="cal-toggle-button">Ver jogos anteriores</button>
+				<button id="back-to-live" class="cal-toggle-button hidden">Voltar ao vivo</button>
+			</div>
 			@{
 				var now = DateTime.Now;
 				var jogosOrdenados = Model.Calendario
@@ -66,10 +71,7 @@
 									<span class="cal-livetag"><span class="live-dot"></span> AO VIVO</span>
 									<span class="cal-phase">@faseGrupo.Key</span>
 								</div>
-								<div class="cal-sticky-buttons">
-									<button id="show-past-games" class="cal-toggle-button">Ver jogos anteriores</button>
-									<button id="back-to-live" class="cal-toggle-button hidden">Voltar ao vivo</button>
-								</div>
+								
 
 								@foreach (var jogoObj in faseGrupo.OrderBy(j => j.HoraPrevista))
 								{
@@ -139,7 +141,7 @@
 										 data-date="@jogoObj.HoraPrevista.ToString("yyyy-MM-dd")"
 										 data-hour="@hora"
 										 data-estado="@jvm?.Estado"
-										 onclick="@(começou ? "toggleScorers(this)" : "")">
+										 onclick="@(começou || @jvm?.Estado == "resultado final" ? "toggleScorers(this)" : "")">
 										<div class="cal-teams">
 											<div class="cal-team-block @class1">
 												<img src="/images/teams/@(Uri.EscapeDataString(jvm?.equipa1 ?? "") + " logo.png")" alt="@jvm?.equipa1" class="cal-team-logo" />
@@ -715,17 +717,12 @@
 		});
 
 		//buttons
-				document.getElementById("show-past-games")?.addEventListener("click", () => {
-			document.querySelectorAll(".cal-day.past").forEach(el => el.classList.remove("hidden"));
-			document.getElementById("back-to-live")?.classList.remove("hidden");
-			document.getElementById("show-past-games")?.classList.add("hidden");
+					const toggleBtn = document.getElementById('ver-anteriores');
+		window.addEventListener('scroll', () => {
+		  const userScrolled = window.scrollY > 300;
+		  const hasHidden = document.querySelector('.cal-day.hidden, .cal-time-block.hidden');
+		  toggleBtn.classList.toggle('visible', userScrolled && hasHidden);
 		});
-
-		document.getElementById("back-to-live")?.addEventListener("click", () => {
-			document.querySelectorAll(".cal-day.past").forEach(el => el.classList.add("hidden"));
-			document.getElementById("back-to-live")?.classList.add("hidden");
-			document.getElementById("show-past-games")?.classList.remove("hidden");
-
 			// opcional: scroll até próximo bloco ao vivo
 			const live = document.querySelector(".cal-game.live");
 			if (live) live.scrollIntoView({ behavior: "smooth", block: "start" });
