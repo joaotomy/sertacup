@@ -127,46 +127,6 @@
             display: inline-flex;
         }
 
-.cal-sticky-buttons {
-    position: sticky;
-    top: calc(220px + 2rem); /* ajusta se necessário abaixo da cal-time-header */
-    z-index: 8;
-    display: flex;
-    justify-content: center;
-    gap: 0.75rem;
-    padding: 0.5rem 1rem;
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(6px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    border-radius: 0 0 12px 12px;
-}
-
-.cal-sticky-buttons {
-    position: fixed;
-    top: 220px; /* ou logo abaixo do header */
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 9;
-    pointer-events: none; /* evita bloquear o scroll por baixo */
-}
-
-.cal-toggle-button {
-    pointer-events: auto; /* só o botão pode interagir */
-    backdrop-filter: blur(6px);
-    background: rgba(255, 255, 255, 0.8);
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    font-family: var(--font-display);
-    font-size: 0.9rem;
-    cursor: pointer;
-    display: none; /* hidden by default */
-}
-
-
-
-    .cal-toggle-button.visible {
-        display: block;
-    }
 
 .cal-time-block {
     position: relative;

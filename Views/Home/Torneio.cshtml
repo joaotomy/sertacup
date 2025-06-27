@@ -17,183 +17,184 @@
 	</div>
 	<div class="cal-sticky-buffer"></div>
 	<div class="col-span-12 md:col-span-8 sm:col-span-4 content-section">
-		<div id="calendario" class="tab-content active">
-
-			<div class="cal-sticky-buttons">
-				<button id="show-past-games" class="cal-toggle-button">Ver jogos anteriores</button>
-				<button id="back-to-live" class="cal-toggle-button hidden">Voltar ao vivo</button>
-			</div>
-			@{
-				var now = DateTime.Now;
-				var jogosOrdenados = Model.Calendario
-				.Select(j => new
-				{
-					Jogo = j,
-					Data = j.hora_inicio ?? DateTime.MinValue,
-					HoraPrevista = j.hora_prevista,
-					Hora = j.hora_prevista.Hour,
-					Fase = j.grupo == 0 ? "FASE FINAL" : "FASE DE GRUPOS"
-				})
-				.OrderBy(j => j.HoraPrevista.Date)
-				.ThenBy(j => j.Hora)
-				.ThenBy(j => j.Fase == "FASE FINAL" ? 1 : 0)
-				.ToList();
-
-				var dias = jogosOrdenados
-				.GroupBy(j => j.HoraPrevista.Date)
-				.OrderBy(g => g.Key);
-			}
-			@foreach (var dia in dias)
+		div id="calendario" class="tab-content active">
+		@{
+			var now = DateTime.Now;
+			var jogosOrdenados = Model.Jogos
+			.Select(j => new
 			{
-				var gruposValidos = dia
-				.SelectMany(j => j.Fase == "FASE FINAL" || j.Fase == "FASE DE GRUPOS" ? new[] { j } : Array.Empty<dynamic>())
-				.Where(j => j.Jogo.equipa1 != 0 && j.Jogo.equipa2 != 0)
-				.ToList();
+				Jogo = j,
+				Data = DateTime.TryParse(j.hora_inicio, out var parsedInicio) ? parsedInicio : DateTime.MinValue,
+				HoraPrevista = DateTime.TryParse(j.Hora, out var parsedPrevista) ? parsedPrevista : DateTime.MinValue,
+				Hora = DateTime.TryParse(j.Hora, out var parsedHora) ? parsedHora.Hour : 0,
+				Fase = j.Fase ?? (j.grupo == "0" ? "FASE FINAL" : "FASE DE GRUPOS")
+			})
+			.OrderBy(j => j.HoraPrevista.Date)
+			.ThenBy(j => j.Hora)
+			.ThenBy(j => j.Fase == "FASE FINAL" ? 1 : 0)
+			.ToList();
 
-				if (!gruposValidos.Any()) continue;
-				var isPast = dia.Key < DateTime.Today;
-				var pt = new System.Globalization.CultureInfo("pt-PT");
-				var dataFormatada = dia.Key.ToString("dd", pt) + "/" + dia.Key.ToString("MMM", pt).Replace(".", "").ToUpper();
-				<div class="cal-day @(isPast ? "past hidden" : "")" data-date="@dia.Key.ToString("yyyy-MM-dd")">
-					<div class="cal-fixed-header" id="calendar-day">@dataFormatada</div>
+			var dias = jogosOrdenados
+			.GroupBy(j => j.HoraPrevista.Date)
+			.OrderBy(g => g.Key);
+		}
+		@foreach (var dia in dias)
+		{
+			var gruposValidos = dia
+			.Where(j => !string.IsNullOrWhiteSpace(j.Jogo.equipa1) && !string.IsNullOrWhiteSpace(j.Jogo.equipa2))
+			.ToList();
 
-					@foreach (var horaGrupo in dia.GroupBy(j => j.HoraPrevista.Hour))
+			if (!gruposValidos.Any()) continue;
+			var isPast = dia.Key < DateTime.Today;
+			var pt = new System.Globalization.CultureInfo("pt-PT");
+			var dataFormatada = dia.Key.ToString("dd", pt) + "/" + dia.Key.ToString("MMM", pt).Replace(".", "").ToUpper();
+			<div class="cal-day @(isPast ? "past hidden" : "")" data-date="@dia.Key.ToString("yyyy-MM-dd")">
+				<div class="cal-fixed-header" id="calendar-day">@dataFormatada</div>
+
+				@foreach (var horaGrupo in dia.GroupBy(j => j.HoraPrevista.Hour))
+				{
+					var hora = horaGrupo.Key;
+
+					@foreach (var faseGrupo in horaGrupo.GroupBy(j => j.Fase))
 					{
-						var hora = horaGrupo.Key;
-				
-						@foreach (var faseGrupo in horaGrupo.GroupBy(j => j.Fase))
-						{
-							var jogosValidos = faseGrupo.Where(j => j.Jogo.equipa1 != 0 && j.Jogo.equipa2 != 0).ToList();
-							if (!jogosValidos.Any()) continue;
-							var horaTexto = horaGrupo.First().HoraPrevista.ToString("HH:mm");
-							<div class="cal-time-block" data-hour="@hora" data-day="@dia.Key.ToString("yyyy-MM-dd")">
-								<div class="cal-time-header">
-									<span class="cal-time">@horaTexto</span>
-									<span class="cal-livetag"><span class="live-dot"></span> AO VIVO</span>
-									<span class="cal-phase">@faseGrupo.Key</span>
-								</div>
-								
-
-								@foreach (var jogoObj in faseGrupo.OrderBy(j => j.HoraPrevista))
-								{
-									if (jogoObj.Jogo.equipa1 == 0 || jogoObj.Jogo.equipa2 == 0)
-									{
-										continue;
-									}
-									var j = jogoObj.Jogo;
-									var jvm = Model.Jogos.FirstOrDefault(x => x.Id == j.Id.ToString());
-									var estadoRaw = jvm?.Estado?.Trim().ToLower() ?? "";
-									var horaPrevista = j.hora_prevista;
-									var horaInicio = j.hora_inicio ?? DateTime.MinValue;
-									var hora2Parte = j.hora_inicio_2parte ?? DateTime.MinValue;
-									var terminado = estadoRaw == "resultado final";
-									var intervalo = estadoRaw == "intervalo";
-									var primeiraParte = estadoRaw == "1ªp";
-									var segundaParte = estadoRaw == "2ªp";
-									var começou = j.começado;
-
-									var isAtrasado = !terminado && !intervalo && !primeiraParte && !segundaParte && horaPrevista < now && !começou;
-
-									var estadoDisplay = estadoRaw.ToUpper();
-									var clockText = "";
-
-									if (primeiraParte)
-									{
-										clockText = GetClockDisplay(j.hora_inicio?.ToString(), now);
-									}
-									else if (segundaParte)
-									{
-										clockText = GetClockDisplay(j.hora_inicio_2parte?.ToString(), now);
-									}
-									else if (intervalo)
-									{
-										clockText = "";
-										estadoDisplay = "INTERVALO";
-									}
-									else if (terminado)
-									{
-										clockText = "";
-										estadoDisplay = "RESULTADO FINAL";
-									}
-
-									if (isAtrasado)
-									{
-										clockText = "";
-										estadoDisplay = $"EM ATRASO ({horaPrevista:HH:mm})";
-									}
-
-									// CSS class logic
-									var estadoClass = "";
-									if (terminado) estadoClass = "finished";
-									else if (intervalo || primeiraParte || segundaParte) estadoClass = "live";
-									else if (isAtrasado) estadoClass = "atrasado";
-
-									// score display
-									var showScore = terminado || começou;
-									var scoreDisplay = showScore ? $"{j.golos_equipa1} - {j.golos_equipa2}" : "VS";
-
-									// winner/loser
-									var class1 = terminado ? (j.golos_equipa1 > j.golos_equipa2 ? "winner" : j.golos_equipa1 < j.golos_equipa2 ? "loser" : "") : "";
-									var class2 = terminado ? (j.golos_equipa2 > j.golos_equipa1 ? "winner" : j.golos_equipa2 < j.golos_equipa1 ? "loser" : "") : "";
-
-
-									var marcadores1 = jvm?.MarcadoresEquipa1 ?? new List<string>();
-									var marcadores2 = jvm?.MarcadoresEquipa2 ?? new List<string>();
-
-									<div class="cal-game @estadoClass"
-										 data-start="@j.hora_inicio"
-										 data-date="@jogoObj.HoraPrevista.ToString("yyyy-MM-dd")"
-										 data-hour="@hora"
-										 data-estado="@jvm?.Estado">
-										<div class="cal-teams">
-											<div class="cal-team-block @class1">
-												<img src="/images/teams/@(Uri.EscapeDataString(jvm?.equipa1 ?? "") + " logo.png")" alt="@jvm?.equipa1" class="cal-team-logo" />
-												<span class="cal-team-name">@jvm?.equipa1</span>
-											</div>
-
-											<div class="cal-display">
-												<div class="cal-game-info">
-													<span class="cal-game-status">@estadoDisplay</span>
-													<span class="cal-game-clock">@clockText</span>
-												</div>
-												<div class="cal-score">@scoreDisplay</div>
-											</div>
-
-											<div class="cal-team-block @class2">
-												<img src="/images/teams/@(Uri.EscapeDataString(jvm?.equipa2 ?? "") + " logo.png")" alt="@jvm?.equipa2" class="cal-team-logo" />
-												<span class="cal-team-name">@jvm?.equipa2</span>
-											</div>
-										</div>
-										@if (marcadores1.Any() || marcadores2.Any())
-										{
-											<div class="cal-scorers">
-												<div class="scorer-left">
-													@foreach (var m in marcadores1)
-													{
-														<div>@m</div>
-													}
-												</div>
-												<div class="scorer-right">
-													@foreach (var m in marcadores2)
-													{
-														<div>@m</div>
-													}
-												</div>
-											</div>
-										}
-										<div class="cal-details">
-											<span class="cal-group">@j.situacao_precaria</span>
-											<span class="cal-field">Campo @j.campo</span>
-										</div>
-
-									</div>
-								}
+						var jogosValidos = faseGrupo.ToList();
+						if (!jogosValidos.Any()) continue;
+						var horaTexto = horaGrupo.First().HoraPrevista.ToString("HH:mm");
+						<div class="cal-time-block" data-hour="@hora" data-day="@dia.Key.ToString("yyyy-MM-dd")">
+							<div class="cal-time-header">
+								<span class="cal-time">@horaTexto</span>
+								<span class="cal-livetag"><span class="live-dot"></span> AO VIVO</span>
+								<span class="cal-phase">@faseGrupo.Key</span>
 							</div>
-						}
+
+							@foreach (var jogoObj in faseGrupo.OrderBy(j => j.HoraPrevista))
+							{
+								var j = jogoObj.Jogo;
+								if (string.IsNullOrWhiteSpace(j.equipa1) || string.IsNullOrWhiteSpace(j.equipa2))
+								{
+									continue;
+								}
+								var estadoRaw = j.Estado?.Trim().ToLower() ?? "";
+								var horaPrevista = DateTime.TryParse(j.Hora, out var hPrev) ? hPrev : DateTime.MinValue;
+								var horaInicio = DateTime.TryParse(j.hora_inicio, out var hIni) ? hIni : DateTime.MinValue;
+								var hora2Parte = DateTime.TryParse(j.hora_inicio_2parte, out var h2) ? h2 : DateTime.MinValue;
+								var terminado = estadoRaw == "resultado final";
+								var intervalo = estadoRaw == "intervalo";
+								var primeiraParte = estadoRaw == "1ªp";
+								var segundaParte = estadoRaw == "2ªp";
+								var comecou = j.começado ?? false;
+								var isAtrasado = !terminado && !intervalo && !primeiraParte && !segundaParte && horaPrevista < now && !comecou;
+
+								var estadoDisplay = estadoRaw.ToUpper();
+								var clockText = "";
+
+								if (primeiraParte)
+								{
+									clockText = GetClockDisplay(j.hora_inicio, now);
+								}
+								else if (segundaParte)
+								{
+									clockText = GetClockDisplay(j.hora_inicio_2parte, now);
+								}
+								else if (intervalo)
+								{
+									estadoDisplay = "INTERVALO";
+									clockText = "";
+								}
+								else if (terminado)
+								{
+									estadoDisplay = "RESULTADO FINAL";
+									clockText = "";
+								}
+								else if (isAtrasado)
+								{
+									estadoDisplay = $"EM ATRASO ({horaPrevista:HH:mm})";
+									clockText = "";
+								}
+
+
+								var estadoClass = terminado ? "finished" : (intervalo || primeiraParte || segundaParte ? "live" : (isAtrasado ? "atrasado" : ""));
+								var showScore = terminado || comecou;
+								var g1 = string.IsNullOrWhiteSpace(j.golos_equipa1) ? "0" : j.golos_equipa1;
+								var g2 = string.IsNullOrWhiteSpace(j.golos_equipa2) ? "0" : j.golos_equipa2;
+								var scoreDisplay = showScore ? $"{g1} - {g2}" : "VS";
+
+								var class1 = terminado ? (int.Parse(g1) > int.Parse(g2) ? "winner" : int.Parse(g1) < int.Parse(g2) ? "loser" : "") : "";
+								var class2 = terminado ? (int.Parse(g2) > int.Parse(g1) ? "winner" : int.Parse(g2) < int.Parse(g1) ? "loser" : "") : "";
+								var marcadores1 = j.MarcadoresEquipa1 ?? new List<string>();
+								var marcadores2 = j.MarcadoresEquipa2 ?? new List<string>();
+
+								<div class="cal-game @estadoClass"
+									 data-start="@j.hora_inicio"
+									 data-date="@horaPrevista.ToString("yyyy-MM-dd")"
+									 data-hour="@hora"
+									 data-estado="@j.Estado" data-g1="@g1"
+									 data-g2="@g2">
+									<div class="cal-teams">
+										<div class="cal-team-block @class1">
+											<img src="/images/teams/@(Uri.EscapeDataString(j.equipa1) + " logo.png")" alt="@j.equipa1" class="cal-team-logo" />
+											<span class="cal-team-name">@j.equipa1</span>
+										</div>
+
+										<div class="cal-display">
+											<div class="cal-game-info">
+												<span class="cal-game-status">@estadoDisplay</span>
+												<span class="cal-game-clock">@clockText</span>
+											</div>
+											<div class="cal-score">@scoreDisplay</div>
+										</div>
+
+										<div class="cal-team-block @class2">
+											<img src="/images/teams/@(Uri.EscapeDataString(j.equipa2) + " logo.png")" alt="@j.equipa2" class="cal-team-logo" />
+											<span class="cal-team-name">@j.equipa2</span>
+										</div>
+									</div>
+									@if (int.Parse(g1) > 0 || int.Parse(g2) > 0)
+									{
+										<div class="cal-scorers">
+											<div class="scorer-left">
+												@if (marcadores1.Any())
+												{
+													foreach (var m in marcadores1)
+													{
+														<div>@m</div>
+													}
+												}
+												else
+												{
+													<div>A Determinar</div>
+												}
+											</div>
+											<div class="scorer-right">
+												@if (marcadores2.Any())
+												{
+													foreach (var m in marcadores2)
+													{
+														<div>@m</div>
+													}
+												}
+												else
+												{
+													<div>A Determinar</div>
+												}
+											</div>
+										</div>
+
+									}
+									<div class="cal-details">
+										<span class="cal-group">@j.situacao_precaria</span>
+										<span class="cal-field">Campo @j.Campo</span>
+									</div>
+								</div>
+							}
+						</div>
 					}
-				</div>
-			}
-		</div>
+				}
+			</div>
+		}
+		]
+		}
+
 
 
 		<div id="grupos" class="tab-content">

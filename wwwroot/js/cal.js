@@ -2,56 +2,15 @@
     const isCalendario = document.getElementById("calendario");
     if (!isCalendario) return;
 
-
     const dayHeader = document.getElementById('calendar-day');
     const timeHeader = document.querySelector('.cal-time-header');
     const allDays = document.querySelectorAll('.cal-day');
     const allBlocks = document.querySelectorAll('.cal-time-block');
     const allGames = document.querySelectorAll('.cal-game');
 
-    const showPastBtn = document.getElementById("show-past-games");
-    const backToLiveBtn = document.getElementById("back-to-live");
-
     const now = new Date();
     let currentDay = "";
     let currentTime = "";
-
-    function hidePastDays() {
-        allDays.forEach(day => {
-            const games = day.querySelectorAll('.cal-game');
-            const anyFuture = Array.from(games).some(game => {
-                const estado = game.dataset.estado?.trim();
-                const start = new Date(game.dataset.start);
-                return (
-                    estado === "1ªP" || estado === "2ªP" || estado === "Intervalo" || (start >= now)
-                );
-            });
-            if (!anyFuture) {
-                day.classList.add("hidden-day");
-            }
-        });
-        showPastBtn.classList.remove("hidden");
-        backToLiveBtn.classList.add("hidden");
-    }
-
-    function showAllDays() {
-        document.querySelectorAll(".cal-day.hidden-day").forEach(d => d.classList.remove("hidden-day"));
-        showPastBtn.classList.add("hidden");
-        backToLiveBtn.classList.remove("hidden");
-    }
-
-    function scrollBackToLive() {
-        const target = document.querySelector(".cal-game.live");
-        if (target) {
-            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-        showPastBtn.classList.remove("hidden");
-        backToLiveBtn.classList.add("hidden");
-        hidePastDays();
-    }
-
-    showPastBtn.addEventListener("click", showAllDays);
-    backToLiveBtn.addEventListener("click", scrollBackToLive);
 
     // Auto Scroll to Live or Closest
     let scrollTarget = null;
@@ -108,7 +67,7 @@
         for (let i = 0; i < allBlocks.length; i++) {
             const block = allBlocks[i];
             const rect = block.getBoundingClientRect();
-            if (rect.top <= 140) {
+            if (rect.top <= 160) {
                 const newHour = block.getAttribute('data-hour');
                 if (newHour && newHour !== currentTime) {
                     const local = block.querySelector('.cal-time')?.textContent || "";
@@ -141,6 +100,19 @@
 
     const previousEstados = new Map();
 
+    window.toggleScorers = function (el) {
+        el.classList.toggle("expanded");
+    };
+
+    function highlightLiveBlocks() {
+        allBlocks.forEach(block => {
+            const liveGames = block.querySelectorAll(".cal-game.live");
+            const tag = block.querySelector(".cal-livetag");
+            tag?.classList.toggle("visible", liveGames.length > 0);
+            block.classList.toggle("live-block", liveGames.length > 0);
+        });
+    }
+
     function applyGameStateClasses() {
         allGames.forEach(game => {
             const estado = game.dataset.estado?.trim();
@@ -170,23 +142,19 @@
                 clock.classList.add("hidden");
             }
         });
+
         highlightLiveBlocks();
-    }
 
-    window.applyGameStateClasses = applyGameStateClasses;
-
-    function highlightLiveBlocks() {
-        allBlocks.forEach(block => {
-            const liveGames = block.querySelectorAll(".cal-game.live");
-            const tag = block.querySelector(".cal-livetag");
-            tag?.classList.toggle("visible", liveGames.length > 0);
-            block.classList.toggle("live-block", liveGames.length > 0);
+        allGames.forEach(game => {
+            const g1 = parseInt(game.dataset.g1 || "0", 10);
+            const g2 = parseInt(game.dataset.g2 || "0", 10);
+            if (g1 + g2 > 0) {
+                game.addEventListener("click", () => toggleScorers(game));
+            }
         });
     }
 
-    window.toggleScorers = function (el) {
-        el.classList.toggle("expanded");
-    };
+    window.applyGameStateClasses = applyGameStateClasses;
 
     function startLiveCheckLoop() {
         setInterval(() => {
@@ -196,12 +164,4 @@
 
     applyGameStateClasses();
     startLiveCheckLoop();
-    allGames.forEach(game => {
-        const estado = game.dataset.estado?.trim();
-        const comecou = estado === "Resultado Final" || estado === "1ªP" || estado === "2ªP" || estado === "Intervalo";
-        if (comecou) {
-            game.addEventListener("click", () => toggleScorers(game));
-        }
-    });
-
 });

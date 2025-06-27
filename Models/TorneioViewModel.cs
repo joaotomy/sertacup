@@ -10,13 +10,11 @@ namespace SertaCup_site.Models
         public List<GroupViewModel> Grupos { get; set; }
         public List<JogoViewModel> Jogos { get; set; }
         public List<Player> Jogadores { get; set; }
-        public List<Game> Calendario { get; set; }
         public TorneioViewModel()
         {
             Grupos = new List<GroupViewModel>();
             Jogos = new List<JogoViewModel>();
             Jogadores = new List<Player>();
-            Calendario = new List<Game>();
         }
     }
 }

@@ -102,6 +102,15 @@ namespace SertaCup_site.Controllers
                     grupo = gruposDb.FirstOrDefault(g => g.id == j.grupo) is var grupoObj && grupoObj != null
                             ? grupoObj.grupo
                             : "0",
+                    golos1 = j.golos_equipa1,
+                    golos2 = j.golos_equipa2,
+                    horaPrevista = j.hora_prevista,
+                    horaInicio = j.hora_inicio,
+                    horaInicio2Parte = j.hora_inicio_2parte,
+                    primeiraParteTerminada = j.primeira_parte_terminada,
+                    terminou = j.terminado,
+                    campoNumero = j.campo,
+                    situacao_precaria = j.situacao_precaria,
                     Campo = "Campo " + j.campo,
                     Hora = j.hora_prevista.ToString("HH:mm"),
                     Estado = GetEstadoJogo(j),
@@ -111,25 +120,6 @@ namespace SertaCup_site.Controllers
                     hora_inicio = j.hora_inicio.ToString(),
                     começado = j.começado,
                 });
-
-                calendario.Add(new Game
-                {
-                    Id = j.Id,
-                    hora_prevista = j.hora_prevista,
-                    equipa1 = j.equipa1,
-                    equipa2 = j.equipa2,
-                    golos_equipa1 = j.golos_equipa1,
-                    golos_equipa2 = j.golos_equipa2,
-                    hora_inicio = j.hora_inicio,
-
-                    terminado = j.terminado,
-                    campo = j.campo,
-                    grupo = j.grupo,
-                    situacao_precaria = j.situacao_precaria,
-
-                });
-
-
             }
 
 
@@ -138,7 +128,6 @@ namespace SertaCup_site.Controllers
             {
                 Grupos = gruposVM,
                 Jogos = jogosVM,
-                Calendario = calendario
             };
 
             return View(viewModel);
