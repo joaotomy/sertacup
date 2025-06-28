@@ -16,6 +16,7 @@
     --overlay-black-70: rgba(50, 50, 50, 0.7);
     --main-black-80: rgba(18, 18, 18, 0.8);
     --live-red: #FF3A3A;
+    --highlight-blue: #4367F6;
     /* Fonts */
     --font-display: 'Blockletter', sans-serif;
     --font-regular: 'Montserrat', sans-serif;
@@ -45,78 +46,7 @@
     opacity: 0.5;
 }
 
-/* === Background Utility Classes === */
-.bg-champs {
-    background: var(--champs-gradient);
-    backdrop-filter: var(--champs-blur);
-}
 
-.bg-eu {
-    background: var(--eu-gradient);
-    backdrop-filter: var(--eu-blur);
-}
-
-.bg-conf {
-    background: var(--conf-gradient);
-    backdrop-filter: var(--conf-blur);
-}
-
-.bg-fem {
-    background: var(--fem-gradient);
-    backdrop-filter: var(--fem-blur);
-}
-
-/* === Transparent Glass Overlay === */
-.overlay-champs::before,
-.overlay-eu::before,
-.overlay-conf::before,
-.overlay-fem::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-    pointer-events: none;
-}
-
-.overlay-champs::before {
-    background: var(--champs-glass-overlay);
-    backdrop-filter: var(--champs-blur);
-}
-
-.overlay-eu::before {
-    background: var(--eu-glass-overlay);
-    backdrop-filter: var(--eu-blur);
-}
-
-.overlay-conf::before {
-    background: var(--conf-glass-overlay);
-    backdrop-filter: var(--conf-blur);
-}
-
-.overlay-fem::before {
-    background: var(--fem-glass-overlay);
-    backdrop-filter: var(--fem-blur);
-}
-
-/* === Radial Gradient Glows === */
-.radial-champs {
-    background: radial-gradient(circle at center, #ffffff20 0%, transparent 80%), var(--champs-gradient);
-}
-
-.radial-eu {
-    background: radial-gradient(circle at center, #ffffff15 0%, transparent 80%), var(--eu-gradient);
-}
-
-.radial-conf {
-    background: radial-gradient(circle at center, #ffffff10 0%, transparent 80%), var(--conf-gradient);
-}
-
-.radial-fem {
-    background: radial-gradient(circle at center, #ffffff10 0%, transparent 80%), var(--fem-gradient);
-}
 
 /* === Light Flicker Animations === */
 @keyframes flicker {
