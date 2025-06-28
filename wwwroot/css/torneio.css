@@ -766,8 +766,8 @@ td.group-team-cell {
     display: none;
 }
 
-.ff-round-column.active-round {
-    color: blue;
+.ff-round-column.active-round.ff-round-title {
+    color: var(--highlight-blue);
 }
 
 .ff-final-round {

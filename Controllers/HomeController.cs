@@ -95,8 +95,8 @@ namespace SertaCup_site.Controllers
                 jogosVM.Add(new JogoViewModel
                 {
                     Id = j.Id.ToString(),
-                    equipa1 = equipasDb.ContainsKey(j.equipa1) ? equipasDb[j.equipa1] : "Desconhecida",
-                    equipa2 = equipasDb.ContainsKey(j.equipa2) ? equipasDb[j.equipa2] : "Desconhecida",
+                    equipa1 = equipasDb.ContainsKey(j.equipa1) ? equipasDb[j.equipa1] : "POR DEFINIR",
+                    equipa2 = equipasDb.ContainsKey(j.equipa2) ? equipasDb[j.equipa2] : "POR DEFINIR",
                     golos_equipa1 = j.golos_equipa1.ToString(),
                     golos_equipa2 = j.golos_equipa2.ToString(),
                     grupo = gruposDb.FirstOrDefault(g => g.id == j.grupo) is var grupoObj && grupoObj != null
