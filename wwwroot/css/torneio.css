@@ -889,7 +889,7 @@ td.group-team-cell {
     transform: translate(-50%, -50%);
     background: var(--overlay-white);
     padding: 0 0.2rem;
-    font-family: var(--font-display);
+    font-family: var(--font-regular);
     font-size: var(--font-size-caption);
     color: var(--main-black);
     z-index: 1;
