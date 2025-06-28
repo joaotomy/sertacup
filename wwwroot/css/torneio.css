@@ -898,12 +898,12 @@ td.group-team-cell {
 /* === Game State Styles === */
 
 .ff-team-block.ff-winner {
-    background: linear-gradient(90deg, #5380F7, #3F5AD2), url('/images/bg test.png');
+    background: var(--highlight-blue);
     background-blend-mode: overlay;
     background-size: cover;
     background-position: center;
-    filter: contrast(1.1) brightness(1.1) saturate(1.2);
     color: var(--main-white);
+    text-shadow: 0 0 4px rgba(255, 255, 255, 0.1), 0 0 8px rgba(255, 200, 200, 0.2), 0 0 12px rgba(255, 180, 180, 0.1);
 }
 
 .ff-team-block.ff-loser {
