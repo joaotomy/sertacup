@@ -391,13 +391,13 @@
 																	</div>
 																	<div class="ff-game-box-inner">
 																		<div class="ff-team-block @class1">
-																			<img src="/images/teams/@(Uri.EscapeDataString(jogo.equipa1 ?? "") + " logo.png")" alt="@jogo.equipa1" class="ff-team-logo" />
+																			<img src="/images/teams/@(Uri.EscapeDataString(jogo.equipa1 ?? "") + " logo.png")" alt="@jogo.equipa1" onerror="this.style.display='none'" class="ff-team-logo" />
 																			<span class="ff-team-name"><span>@jogo.equipa1</span></span>
 																			<div class="ff-separator"></div>
 																			<span class="ff-team-score">@g1</span>
 																		</div>
 																		<div class="ff-team-block @class2">
-																			<img src="/images/teams/@(Uri.EscapeDataString(jogo.equipa2 ?? "") + " logo.png")" alt="@jogo.equipa2" class="ff-team-logo" />
+																			<img src="/images/teams/@(Uri.EscapeDataString(jogo.equipa2 ?? "") + " logo.png")" alt="@jogo.equipa2" onerror="this.style.display='none'" class="ff-team-logo" />
 																			<span class="ff-team-name"><span>@jogo.equipa2</span></span>
 																			<div class="ff-separator"></div>
 																			<span class="ff-team-score">@g2</span>

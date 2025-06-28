@@ -43,7 +43,7 @@ namespace SertaCup_site.Controllers
                     .Select((c, index) => new TeamViewModel
                     {
                         Position = index + 1,
-                        Name = equipasDb.ContainsKey(c.equipa) ? equipasDb[c.equipa] : "Desconhecida",
+                        Name = equipasDb.ContainsKey(c.equipa) ? equipasDb[c.equipa] : "POR DEFINIR",
                         J = c.jogos_feitos ?? 0,
                         V = c.vitorias ?? 0,
                         E = c.empate ?? 0,
