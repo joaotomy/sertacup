@@ -762,6 +762,10 @@ td.group-team-cell {
     min-width: 0;
 }
 
+.ff-round-colum.active .ff-round-title{
+    color: var(--highlight-blue);
+}
+
 .ff-round-colum:first-child .ff-vertical-separator {
     display: none;
 }
@@ -889,22 +893,18 @@ td.group-team-cell {
     font-size: clamp(0.3rem, 0.2rem + 0.3vw, 0.6rem);
     color: var(--main-black);
     z-index: 1;
+    font-weight: bold;
 }
 
 /* === Game State Styles === */
 
 .ff-team-block.ff-winner {
-    background: var(--highlight-blue);
-    background-blend-mode: overlay;
-    background-size: cover;
-    background-position: center;
     color: var(--main-white);
+    text-shadow: 0 0 4px rgba(255, 255, 255, 0.1), 0 0 8px rgba(255, 200, 200, 0.2), 0 0 12px rgba(255, 180, 180, 0.1);
 }
 
 .ff-team-block.ff-loser {
-    background: var(--overlay-black);
-    color: var(--overlay-white);
-    opacity: 0.6;
+    opacity: 0.5;
 }
 
 /* === Live Game === */

@@ -20,7 +20,7 @@
                     <span> <a asp-controller="Home" asp-action="Torneio" class="nav-item">TORNEIO</a> </span>
                     <div class="dropdown-content">
                         <a asp-controller="Home" asp-action="Torneio" asp-route-tab="calendario">Calendário</a>
-                        <a asp-controller="Home" asp-action="Torneio" asp-route-tab="grupos">Grupos</a>
+                        <a asp-controller="Home" asp-action="Torneio" asp-route-tab="grupos" class="unClick">Grupos</a>
                         <a asp-controller="Home" asp-action="Torneio" asp-route-tab="fases-finais">Fases Finais</a>
                     </div>
                 </div>
@@ -58,7 +58,7 @@
             <span onclick="toggleSubMenu()">TORNEIO</span>
             <div id="mobileSubmenu" class="mobile-submenu">
                 <a asp-controller="Home" asp-action="Torneio" asp-route-tab="calendario">Calendário</a>
-                <a asp-controller="Home" asp-action="Torneio" asp-route-tab="grupos">Grupos</a>
+                <a asp-controller="Home" asp-action="Torneio" asp-route-tab="grupos" class="unClick">Grupos</a>
                 <a asp-controller="Home" asp-action="Torneio" asp-route-tab="fases-finais">Fases Finais</a>
             </div>
         </div>
