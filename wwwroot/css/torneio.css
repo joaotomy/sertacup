@@ -651,7 +651,7 @@ td.group-team-cell {
 }
 
 .place-2 {
-    background: var(--main-black-80);
+    background: var(--overlay-black);
     color: var(--main-white);
 }
 
