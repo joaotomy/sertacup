@@ -423,29 +423,8 @@
         padding: 0.2rem 0.5rem;
     }
 
-    .cal-livetag {
-        display: none;
-        position: absolute;
-        left: 50%;
-        transform: translateX(-50%);
-        color: var(--live-red);
-        font-size: var(--font-size-h10);
-        font-family: var(--font-display);
-        align-items: center;
-        gap: 0.25rem;
-    }
 
-        .cal-livetag.visible {
-            display: inline-block;
-        }
-
-    .live-dot {
-        width: 6px;
-        height: 6px;
-        border-radius: 50%;
-        background-color: var(--live-red);
-        animation: blink 1s infinite;
-    }
+}
 
 body.noscroll {
     overflow: hidden;
