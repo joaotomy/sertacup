@@ -644,17 +644,17 @@ td.group-team-cell {
 
 
 .place-1 {
-    background: var(--main-black-80);
+    background: var(--overlay-black);
     color: var(--main-white);
 }
 
 .place-2 {
-    background: var(--main-black-80);
+    background: var(--overlay-black);
     color: var(--main-white);
 }
 
 .place-3 {
-    background: var(--overlay-black);
+    background: var(--main-black-80);
     color: var(--main-white);
 }
 
