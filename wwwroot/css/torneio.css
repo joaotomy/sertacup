@@ -766,10 +766,6 @@ td.group-team-cell {
     display: none;
 }
 
-.ff-round-column.active-round.ff-round-title {
-    color: var(--highlight-blue);
-}
-
 .ff-final-round {
     font-size: var(--font-size-h4);
 }
@@ -888,9 +884,9 @@ td.group-team-cell {
     left: 50%;
     transform: translate(-50%, -50%);
     background: var(--overlay-white);
-    padding: 0 0.2rem;
+    padding: 0 0.3rem;
     font-family: var(--font-regular);
-    font-size: clamp(0.3rem, 0.2rem + 0.2vw, 0.6rem);
+    font-size: clamp(0.3rem, 0.2rem + 0.3vw, 0.6rem);
     color: var(--main-black);
     z-index: 1;
 }
@@ -903,7 +899,6 @@ td.group-team-cell {
     background-size: cover;
     background-position: center;
     color: var(--main-white);
-    text-shadow: 0 0 4px rgba(255, 255, 255, 0.1), 0 0 8px rgba(255, 200, 200, 0.2), 0 0 12px rgba(255, 180, 180, 0.1);
 }
 
 .ff-team-block.ff-loser {
