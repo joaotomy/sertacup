@@ -101,7 +101,7 @@
 .vencedores-text p {
     font-family: var(--font-regular);
     font-size: var(--font-size-body);
-    max-width: 60ch;
+    max-width: 80ch;
 }
 
 
