@@ -1,2 +1,47 @@
-﻿body {
+﻿.logo-scroller-wrapper {
+    overflow: hidden;
+    height: 100%; /* ajusta à tua grid */
+    position: relative;
+}
+
+.logo-scroller {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    z-index: 5;
+}
+
+.logo-item {
+    flex: 0 0 auto;
+    height: 50px; /* altura uniforme */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .logo-item img {
+        max-height: 100%;
+        max-width: 80%;
+        object-fit: contain;
+        transition: transform 0.3s ease;
+    }
+
+.text-header {
+    display: sitcky;
+    top: 60px;
+}
+
+.text-footer {
+    position: fixed;
+    bottom: 0;
+}
+
+.text-header, .text-footer {
+    background-color: var(--main-black);
+    color: var(--main-white);
+    font-size: clamp(2rem, 4vw + 1rem, 4rem);
+    font-family: var(--font-display);
+    padding: 0 3rem;
+    text-align: center;
+    width: 100vw;
 }

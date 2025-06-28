@@ -1,8 +1,35 @@
 ﻿@{
     ViewData["Title"] = "Patrocinadores";
-    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-@section Styles {
-    <link rel="stylesheet" href="~/css/patrocinadores.css" />
+
+<link rel="stylesheet" href="~/css/patron.css" />
+
+
+@{
+    var folderPath = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "patron");
+    var logos = System.IO.Directory.GetFiles(folderPath)
+                                   .Select(f => System.IO.Path.GetFileName(f))
+                                   .ToList();
 }
+<section class="col-span-12 md-col-span-8 sd-col-span-4">
+    <div class="text-header">
+        <div>OS QUE TORNAM ISTO POSSÍVEL</div>
+    </div>
+
+    <div class="logo-scroller">
+        @for (int i = 0; i < 2; i++) // duplicar logos p/ scroll infinito
+        {
+            foreach (var logo in logos)
+            {
+                <div class="logo-item">
+                    <img src="~/images/patron/@logo" alt="Patrocinador" />
+                </div>
+            }
+        }
+    </div>
+
+    <div class="text-footer">
+        <div>A TODOS O NOSSO OBRIGADO</div>
+    </div>
+</section>

@@ -1,2 +1,190 @@
-﻿body {
+﻿/* ---------- SECTION WRAPPER ---------- */
+.section {
+    width: 100%;
+    padding: 6rem 1rem;
+}
+
+/* ---------- TITLES ---------- */
+.info-title {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 8vw + 1rem, 8rem);
+    line-height: 1;
+    margin-bottom: 3rem;
+}
+
+/* ---------- HORÁRIOS ---------- */
+.section.horarios {
+    background: var(--main-white);
+    color: var(--main-black);
+}
+
+.horarios-dia {
+    grid-column: span 6;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+@media (max-width: 640px) {
+    .horarios-dia {
+        grid-column: span 4;
+    }
+}
+
+.dia-title {
+    font-family: var(--font-display);
+    font-size: var(--font-size-h4);
+}
+
+.hour-block {
+    display: grid;
+    grid-template-columns: 150px 1fr;
+    gap: .5rem;
+}
+
+.hour-title {
+    font-family: var(--font-regular);
+    font-size: var(--font-size-body);
+    font-weight: 600;
+}
+
+/* ---------- CAMPOS ---------- */
+.section.campos {
+    background: var(--main-black);
+    color: var(--main-white);
+}
+
+.campos-grid {
+    gap: .5rem;
+    grid-template-columns: repeat(8, 1fr);
+    auto-rows: minmax(80px, auto);
+}
+
+@media (max-width: 1024px) {
+    .campos-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.campo-principal {
+    grid-column: span 2;
+    grid-row: span 2;
+    background: #222;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (max-width: 1024px) {
+    .campo-principal {
+        grid-column: span 4;
+    }
+}
+
+.campo-img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.campo-slot {
+    background: #444;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: .75rem;
+    text-align: center;
+}
+
+.campo-nome {
+    font-family: var(--font-display);
+    font-size: var(--font-size-h5);
+}
+
+.campo-desc {
+    font-family: var(--font-regular);
+    font-size: var(--font-size-body);
+}
+
+/* ---------- PARTICIPANTES ---------- */
+.section.participantes {
+    background: var(--main-white);
+    color: var(--main-black);
+}
+
+.participantes-grid {
+    gap: 1rem;
+    grid-template-columns: repeat(6, 1fr);
+}
+
+@media (max-width: 1024px) {
+    .participantes-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (max-width: 640px) {
+    .participantes-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.logo-item {
+    background: #f9f9f9;
+    padding: .5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .logo-item img {
+        max-width: 100%;
+        max-height: 60px;
+        width: auto;
+        height: 60px;
+        object-fit: contain;
+    }
+
+/* ---------- FORMATO ---------- */
+.section.formato {
+    background: var(--main-black);
+    color: var(--main-white);
+}
+
+.formato-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+    max-width: 60ch;
+}
+
+.formato-bloco {
+    display: flex;
+    flex-direction: column;
+    gap: .75rem;
+}
+
+.formato-subtitulo {
+    font-family: var(--font-display);
+    font-size: var(--font-size-h4);
+}
+
+.formato-texto {
+    font-family: var(--font-regular);
+    font-size: var(--font-size-body);
+    line-height: 1.5;
+}
+
+/* ---------- GENERAL ---------- */
+.dia-title,
+.campo-nome,
+.formato-subtitulo {
+    text-transform: uppercase;
+}
+
+.hour-block,
+.campo-slot,
+.logo-item {
+    border-radius: 4px;
 }

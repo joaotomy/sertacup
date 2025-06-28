@@ -14,14 +14,14 @@
     <header class="navbar">
         <div class="nav-wrapper">
             <div class="nav-section">
-                <a class="nav-item" asp-controller="Home" asp-action="Info">INFORMAÇÕES</a>
+                <a class="nav-item unClick" asp-controller="Home" asp-action="Info">INFORMAÇÕES</a>
 
                 <div class="dropdown">
                     <span> <a asp-controller="Home" asp-action="Torneio" class="nav-item">TORNEIO</a> </span>
                     <div class="dropdown-content">
                         <a asp-controller="Home" asp-action="Torneio" asp-route-tab="calendario">Calendário</a>
                         <a asp-controller="Home" asp-action="Torneio" asp-route-tab="grupos">Grupos</a>
-                        <a asp-controller="Home" asp-action="Torneio" asp-route-tab="fases-finais">Fases Finais</a>
+                        <a asp-controller="Home" asp-action="Torneio" asp-route-tab="fases-finais" class="unClick">Fases Finais</a>
                     </div>
                 </div>
             </div>
@@ -34,7 +34,7 @@
 
             <div class="nav-section">
                 <a class="nav-item" asp-controller="Home" asp-action="Historia">HISTÓRIA</a>
-                <a class="nav-item" asp-controller="Home" asp-action="Patrocinadores">PATROCINADORES</a>
+                <a class="nav-item unClick" asp-controller="Home" asp-action="Patrocinadores">PATROCINADORES</a>
             </div>
         </div>
     </header>
@@ -53,23 +53,30 @@
 
 
     <div class="mobile-menu" id="mobileMenu">
-        <a asp-controller="Home" asp-action="Informações">INFORMAÇÕES</a>
+        <a asp-controller="Home" asp-action="Informações" class="unClick">INFORMAÇÕES</a>
         <div class="dropdown-mobile">
             <span onclick="toggleSubMenu()">TORNEIO</span>
             <div id="mobileSubmenu" class="mobile-submenu">
-                <a asp-controller="Home" asp-action="Torneio">Calendário</a>
-                <a asp-controller="Home" asp-action="Grupos">Grupos</a>
-                <a asp-controller="Home" asp-action="FasesFinais">Fases Finais</a>
+                <a asp-controller="Home" asp-action="Torneio" asp-route-tab="calendario">Calendário</a>
+                <a asp-controller="Home" asp-action="Torneio" asp-route-tab="grupos">Grupos</a>
+                <a asp-controller="Home" asp-action="Torneio" asp-route-tab="fases-finais" class="unClick">Fases Finais</a>
             </div>
         </div>
-        <a asp-controller="Home" asp-action="Turismo">TURISMO</a>
-        <a asp-controller="Home" asp-action="Page4">HISTÓRIA</a>
+        <a asp-controller="Home" asp-action="Historia">HISTÓRIA</a>
+        <a asp-controller="Home" asp-action="Patrocinadores" class="unClick">PATROCINADORES</a>
     </div>
 
     <main>
         @RenderBody()
     </main>
 
+    <footer class="site-footer">
+        <div class="footer-content">
+            <p>&copy; @DateTime.Now.Year Sertã Cup. Todos os direitos reservados.</p>
+            <p>Este site é apenas informativo. Nenhum dado pessoal é recolhido.</p>
+            <p><a href="/politica-privacidade">Política de Privacidade</a> | <a href="/termos">Termos de Uso</a></p>
+        </div>
+    </footer>
     <script src="~/js/site.js"></script>
     @RenderSection("Scripts", required: false)
 

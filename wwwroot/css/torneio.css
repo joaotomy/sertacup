@@ -644,21 +644,23 @@ td.group-team-cell {
 
 
 .place-1 {
-    background: linear-gradient(90deg, #5380F7, #3F5AD2), url('/images/bg test.png');
-    backdrop-filter: var(--champs-blur);
+    background: var(--main-black-80);
+    color: var(--main-white);
 }
 
 .place-2 {
+    background: var(--main-black-80);
+    color: var(--main-white);
 }
 
 .place-3 {
-    background: var(--eu-gradient);
-    backdrop-filter: var(--eu-blur);
+    background: var(--overlay-black);
+    color: var(--main-white);
 }
 
 .place-4 {
-    background: var(--conf-gradient);
-    backdrop-filter: var(--conf-blur);
+    background: var(--overlay-black-70);
+    color: var(--main-white);
 }
 
 

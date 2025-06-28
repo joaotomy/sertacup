@@ -1,8 +1,124 @@
 ﻿@{
     ViewData["Title"] = "Informações";
-    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 @section Styles {
     <link rel="stylesheet" href="~/css/info.css" />
 }
+@{
+    var folderPath = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "teams");
+    var teams = System.IO.Directory.GetFiles(folderPath)
+                                   .Select(f => System.IO.Path.GetFileName(f))
+                                   .ToList();
+}
+<section class="section horarios">
+    <div class="info-title">HORÁRIOS</div>
+    <div class="grid-container">
+        <div class="col-span-6 sm:col-span-4 horarios-dia">
+            <div class="dia-title">Dia 1</div>
+            <div class="hour-block">
+                <div class="hour-title">9:00</div>
+                <div>Cerimónia de Abertura</div>
+            </div>
+            <div class="hour-block">
+                <div class="hour-title">10:30 - 22:30</div>
+                <div>Jogos</div>
+            </div>
+            <div class="hour-block">
+                <div class="hour-title">19:00 - 20:30</div>
+                <div>Sunset com DJ Kadiv</div>
+            </div>
+        </div>
+        <div class="col-span-6 sm:col-span-4 horarios-dia">
+            <div class="dia-title">Dia 2</div>
+            <div class="hour-block">
+                <div class="hour-title">9:30 - 19:00</div>
+                <div>Jogos</div>
+            </div>
+            <div class="hour-block">
+                <div class="hour-title">15:00 - 18:00</div>
+                <div>Finais</div>
+            </div>
+            <div class="hour-block">
+                <div class="hour-title">19:00</div>
+                <div>Entrega de prémios</div>
+            </div>
+        </div>
+        <div class="col-span-12 horarios-dia">
+            <div class="hour-block">
+                <div class="hour-title">Durante todo o fim de semana</div>
+                <div>Atividades, comida e bebida</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section campos">
+    <div class="info-title">CAMPOS</div>
+    <div class="grid-container campos-grid">
+        <div class="col-span-4 md:col-span-2 row-span-2 campo-principal">
+            <img src="/images/campo-principal.jpg" alt="Campo principal" class="campo-img" />
+        </div>
+        <div class="campo-slot">
+            <div class="campo-nome">Cernache</div>
+            <div class="campo-desc">3 Campos</div>
+        </div>
+        <div class="campo-slot">
+            <div class="campo-nome">Cabeçudo</div>
+            <div class="campo-desc">2 Campos</div>
+        </div>
+        <div class="campo-slot">
+            <div class="campo-nome">Sertã</div>
+            <div class="campo-desc">2 Campos</div>
+            <div class="campo-desc">O CAMPO DA FINAL: DR MARQUES DOS SANTOS</div>
+        </div>
+        @for (int i = 4; i <= 7; i++)
+        {
+            <div class="campo-slot">Campo @i</div>
+        }
+    </div>
+</section>
+
+<section class="section participantes">
+    <div class="info-title">PARTICIPANTES</div>
+    <div class="grid-container participantes-grid">
+        @foreach (var logo in teams)
+        {
+            <div class="logo-item">
+                <img src="~/images/teams/@logo" alt="Patrocinador" />
+            </div>
+        }
+    </div>
+</section>
+
+<section class="section formato">
+    <div class="info-title">FORMATO</div>
+    <div class="grid-container formato-wrapper">
+        <div class="formato-bloco">
+            <div class="formato-subtitulo">Estrutura</div>
+            <div class="formato-texto">
+                A competição da categoria Sub-13 será composta por 32 equipas, em que todas realizam no mínimo 6 jogos,
+                três na fase de grupos e pelo menos três na fase de classificação final.<br /><br />
+                • 1ª fase com oito grupos de quatro equipas. Cada equipa jogará pelo menos um jogo em relvado natural.<br />
+                • Na 2ª fase, todas realizam pelo menos três jogos:<br />
+                &nbsp;&nbsp;- 1º e 2º de cada grupo: disputam a <strong>LIGA DOS CAMPEÕES</strong> (oitavos até final).<br />
+                &nbsp;&nbsp;- 3ºs: disputam a <strong>LIGA EUROPA</strong> (1º ao 8º lugar).<br />
+                &nbsp;&nbsp;- 4ºs: disputam a <strong>LIGA CONFERÊNCIA</strong> (1º ao 8º lugar).
+            </div>
+        </div>
+        <div class="formato-bloco">
+            <div class="formato-subtitulo">Duração dos Jogos</div>
+            <div class="formato-texto">
+                • Jogos de 20 minutos cada parte, com 5 minutos de intervalo.<br />
+                • A final terá duas partes de 25 minutos com 10 minutos de intervalo.
+            </div>
+        </div>
+        <div class="formato-bloco">
+            <div class="formato-subtitulo">Desempates</div>
+            <div class="formato-texto">
+                • Jogos a eliminar que terminem empatados vão diretamente para penáltis.<br />
+                • Série de 5 grandes penalidades. Se continuar empatado, segue em séries de 1.
+            </div>
+        </div>
+    </div>
+</section>

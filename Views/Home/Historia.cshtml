@@ -1,33 +1,32 @@
 ﻿@{
     ViewData["Title"] = "História";
-    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-@section Styles {
-    <link rel="stylesheet" href="~/css/historia.css" />
-}
+<link rel="stylesheet" href="~/css/historia.css" />
 
 <main>
     <!-- HISTÓRIA Section -->
-    <section class="historia-section">
-        <div class="grid-container">
-            <div class="col-span-12 md:col-span-8 sm:col-span-4 historia-title">História</div>
-            <div class="col-span-12 md:col-span-8 sm:col-span-4 historia-text">
-                <p>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                </p>
+    <section class="stacked-section historia-section">
+        <div class="stacked-image historia-bg-img"></div>
+        <div class="stacked-overlay">
+            <div class="grid-container">
+                <div class="col-span-12 md:col-span-8 sm:col-span-4 stacked-title">História</div>
             </div>
         </div>
-    </section>
+        <div class="stacked-content">
+            <div class="grid-container">
+                <div class="col-span-12 md:col-span-8 sm:col-span-4 historia-text">
+                    <p>
+                        Existia a vontade de criar um torneio de referência a nível Distrital e Nacional, promovendo o concelho da Sertã e dando a conhecer todo o seu
+                        potencial. Para tal o S.F.C. decidiu organizar o Sertã Cup.
+                        Este evento visa proporcionar aos jovens atletas a prática de futebol,
+                        promovendo o convívio entre equipas, contribuindo para a sua formação
+                        desportiva e pessoal e também a criação de parecerias com entidades locais e regionais, potenciando
+                        angariação de fundos tal como a APPACDM e CERCICAPER.
 
-    <!-- VISÃO Section -->
-    <section class="visao-section">
-        <div class="grid-container">
-            <div class="col-span-12 md:col-span-8 sm:col-span-4 visao-title ">Visão</div>
-            <div class="col-span-12 md:col-span-8 sm:col-span-4 visao-text">
-                <p>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                </p>
+                        Esta será a quarta edição, onde o objetivo de crescer e aumentar o números de equipas
+                        participantes para 32 foi alcançado!
+                </div>
             </div>
         </div>
     </section>
@@ -36,14 +35,9 @@
     <section class="social-section">
         <div class="grid-container">
             <div class="col-span-12 md:col-span-8 sm:col-span-4 social-title">Responsabilidade Social</div>
-            <div class="col-span-12 md:col-span-8 sm:col-span-4 social-text">
-                <p>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud.
-                </p>
-            </div>
             <div class="col-span-12 md:col-span-8 sm:col-span-4 social-logos">
-                <img src="/images/parceiro1.png" alt="Parceiro 1" class="social-logo" />
-                <img src="/images/parceiro2.png" alt="Parceiro 2" class="social-logo" />
+                <img src="/images/APPACDM.png" alt="Parceiro 1" class="social-logo" />
+                <img src="/images/CERCICAPER.png" alt="Parceiro 2" class="social-logo" />
             </div>
         </div>
     </section>
@@ -52,14 +46,25 @@
     <section class="vencedores-section">
         <div class="grid-container">
             <div class="col-span-12 md:col-span-8 sm:col-span-4 vencedores-title">Vencedores</div>
-            <div class="col-span-12 md:col-span-8 sm:col-span-4 vencedores-text">
-                <p>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip.
-                </p>
+            <div class="vencedores-content col-span-12 md:col-span-8 sm:col-span-4">
+                <div class="vencedor-box ">
+                    <div class="edicao">Iª</div>
+                    <p>ESCOLA PEDRO ROMA</p>
+                </div>
+                <div class="vencedor-box">
+                    <div class="edicao">IIª</div>
+                    <p>SERTANENSE FC</p>
+                </div>
+                <div class="vencedor-box">
+                    <div class="edicao">IIIª</div>
+                    <p>ESCOLA BENFICA P.G</p>
+                </div>
+                <div class="vencedor-box">
+                    <div class="edicao">IVª</div>
+                    <p>???</p>
+                </div>
             </div>
-            <div class="col-span-12 md:col-span-8 sm:col-span-4 vencedores-img">
-                <img src="/images/trofeu.png" alt="Troféu Sertã Cup" />
-            </div>
+            <img src="/images/cup test.png" alt="Taça" class="vencedores-image" />
         </div>
     </section>
 </main>

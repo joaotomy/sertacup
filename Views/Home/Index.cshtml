@@ -18,7 +18,7 @@
             <div class="hero-title">IV SERTÃ CUP</div>
             <div class="hero-subtitle">28/29 JUNHO</div>
             <div class="cta-wrapper">
-                <a class="cta" asp-controller="Home" asp-action="Informacoes">MAIS INFORMAÇÕES</a>
+                <a class="cta" asp-controller="Home" asp-action="Info">MAIS INFORMAÇÕES</a>
             </div>
         </div>
     </div>
@@ -26,7 +26,7 @@
 
 
 <!-- Live Games Section -->
-<section class="live-banner">
+<section class="live-banner remove">
     <div class="live-strip">ACOMPANHA OS RESULTADOS EM DIRETO!</div>
     <div class="col-span-12 live-grid">
         @{
@@ -144,17 +144,12 @@
     </div>
 </section>
 
-
-
-<!-- Blank Section 1 -->
-<section class="blank-section"></section>
-
 @{
     var logoCount = 6;
 }
 
 <!-- Patron Banner -->
-<section class="patron-banner">
+<section class="patron-banner remove">
     <div class="logos-wrapper">
         <div class="logos-track" id="logosTrack">
             @for (int i = 1; i <= logoCount; i++)
@@ -174,8 +169,5 @@
         </div>
     </div>
 </section>
-
-<!-- Blank Section 2 -->
-<section class="blank-section"></section>
 
 <script src="~/js/index.js"></script>
