@@ -140,13 +140,15 @@
             applyGameStateClasses();
         }, 15000);
     }
-    const calendarioTab = document.querySelector("#calendario.tab-content.active");
-    if (calendarioTab) {
-        const firstLiveGame = calendarioTab.querySelector(".cal-game.live");
-        if (firstLiveGame) {
-            firstLiveGame.scrollIntoView({ behavior: "smooth", block: "center" });
+    setTimeout(() => {
+        const calendarioTab = document.querySelector("#calendario.tab-content.active");
+        if (calendarioTab) {
+            const firstLiveGame = calendarioTab.querySelector(".cal-game.live");
+            if (firstLiveGame) {
+                firstLiveGame.scrollIntoView({ behavior: "smooth", block: "center" });
+            }
         }
-    }
+    }, 100);
 
     applyGameStateClasses();
     startLiveCheckLoop();
