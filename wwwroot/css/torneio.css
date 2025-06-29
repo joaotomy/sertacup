@@ -837,7 +837,7 @@ td.group-team-cell {
 .ff-team-name {
     flex: 1;
     font-family: var(--font-display);
-    font-size: var(--font-size-h8);
+    font-size: var(--font-size-h9);
 }
 
 .ff-team-score {
