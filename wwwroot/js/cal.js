@@ -141,6 +141,11 @@
         }, 15000);
     }
 
+    const firstLiveGame = document.querySelector(".cal-game.live");
+    if (firstLiveGame) {
+        firstLiveGame.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+
     applyGameStateClasses();
     startLiveCheckLoop();
 });
